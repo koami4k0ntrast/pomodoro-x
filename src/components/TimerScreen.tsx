@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, StatusBar, TouchableOpacity } from 'react-native';
 import { Settings, Square, SkipForward, BarChart3 } from 'lucide-react-native';
 import { useTimer } from '../contexts/TimerContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { TimerDisplay } from './TimerDisplay';
 import { CycleLabelModal } from './CycleLabelModal';
 import { GoalProgress } from './GoalProgress';
-import { Colors, Spacing, Typography } from '../constants';
+import { Spacing, Typography } from '../constants';
 
 interface TimerScreenProps {
   onOpenSettings: () => void;
@@ -13,6 +14,7 @@ interface TimerScreenProps {
 }
 
 export function TimerScreen({ onOpenSettings, onOpenStatistics }: TimerScreenProps) {
+  const { colors, isDark } = useTheme();
   const {
     currentSession,
     currentCycle,
@@ -63,18 +65,21 @@ export function TimerScreen({ onOpenSettings, onOpenStatistics }: TimerScreenPro
   const showSecondaryButtons = timerState === 'running' || timerState === 'paused';
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar 
+        barStyle={isDark ? "light-content" : "dark-content"} 
+        backgroundColor={colors.background} 
+      />
       
       {/* Header with Settings */}
       <View style={styles.header}>
-        <Text style={styles.appTitle}>PomodoroX</Text>
+        <Text style={[styles.appTitle, { color: colors.text }]}>PomodoroX</Text>
         <View style={styles.headerButtons}>
-          <TouchableOpacity style={styles.headerButton} onPress={onOpenStatistics}>
-            <BarChart3 size={20} color={Colors.text} strokeWidth={2} />
+          <TouchableOpacity style={[styles.headerButton, { backgroundColor: colors.surface }]} onPress={onOpenStatistics}>
+            <BarChart3 size={20} color={colors.text} strokeWidth={2} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerButton} onPress={onOpenSettings}>
-            <Settings size={20} color={Colors.text} strokeWidth={2} />
+          <TouchableOpacity style={[styles.headerButton, { backgroundColor: colors.surface }]} onPress={onOpenSettings}>
+            <Settings size={20} color={colors.text} strokeWidth={2} />
           </TouchableOpacity>
         </View>
       </View>
@@ -100,26 +105,40 @@ export function TimerScreen({ onOpenSettings, onOpenStatistics }: TimerScreenPro
             onEdit={handleEditCycleInfo}
           />
 
-          {/* Secondary Control Buttons - Above session info */}
+          {/* Secondary Control Buttons - Below session info */}
           <View style={[styles.secondaryButtons, { opacity: showSecondaryButtons ? 1 : 0 }]}>
             <TouchableOpacity 
-              style={[styles.secondaryButton, styles.stopButton]} 
+              style={[
+                styles.secondaryButton, 
+                { 
+                  borderColor: colors.error, 
+                  backgroundColor: colors.error + '15',
+                  shadowColor: colors.shadow 
+                }
+              ]} 
               onPress={stopTimer}
               activeOpacity={0.8}
             >
-              <Square size={16} color="#e74c3c" strokeWidth={2} />
-              <Text style={[styles.buttonText, styles.stopButtonText]}>
+              <Square size={16} color={colors.error} strokeWidth={2} />
+              <Text style={[styles.buttonText, { color: colors.error }]}>
                 Stop
               </Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.secondaryButton, styles.skipButton]} 
+              style={[
+                styles.secondaryButton, 
+                { 
+                  borderColor: colors.accent, 
+                  backgroundColor: colors.accent + '15',
+                  shadowColor: colors.shadow 
+                }
+              ]} 
               onPress={skipTimer}
               activeOpacity={0.8}
             >
-              <SkipForward size={16} color={Colors.accent} strokeWidth={2} />
-              <Text style={[styles.buttonText, styles.skipButtonText]}>
+              <SkipForward size={16} color={colors.accent} strokeWidth={2} />
+              <Text style={[styles.buttonText, { color: colors.accent }]}>
                 Skip
               </Text>
             </TouchableOpacity>
@@ -148,7 +167,6 @@ export function TimerScreen({ onOpenSettings, onOpenStatistics }: TimerScreenPro
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -161,7 +179,6 @@ const styles = StyleSheet.create({
   appTitle: {
     fontSize: Typography.sizes.header,
     fontFamily: Typography.families.black,
-    color: Colors.text,
   },
   headerButtons: {
     flexDirection: 'row',
@@ -171,10 +188,8 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -201,31 +216,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: Colors.muted,
-    backgroundColor: Colors.white,
+    borderWidth: 2,
     minWidth: 80,
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.xs,
-  },
-  stopButton: {
-    borderColor: '#e74c3c',
-  },
-  skipButton: {
-    borderColor: Colors.accent,
+    // shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   buttonText: {
     fontSize: Typography.sizes.body,
     fontWeight: Typography.weights.medium,
     fontFamily: Typography.families.bold,
     textAlign: 'center',
-  },
-  stopButtonText: {
-    color: '#e74c3c',
-  },
-  skipButtonText: {
-    color: Colors.accent,
   },
   leftButton: {
     position: 'absolute',

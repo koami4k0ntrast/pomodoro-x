@@ -9,9 +9,10 @@ import {
   Alert,
   SafeAreaView,
 } from 'react-native';
-import { X, Save, RotateCcw, Download, Share } from 'lucide-react-native';
-import { Colors, Typography, Spacing, DefaultGoals } from '../constants';
+import { X, Save, RotateCcw, Download, Share, Moon, Sun, Smartphone } from 'lucide-react-native';
+import { Typography, Spacing, DefaultGoals } from '../constants';
 import { Settings, Goals } from '../types';
+import { useTheme, ThemePreference } from '../contexts/ThemeContext';
 import { DurationPicker } from './DurationPicker';
 import { VolumeSlider } from './VolumeSlider';
 import { GoalSettings } from './GoalSettings';
@@ -24,6 +25,7 @@ interface SettingsScreenProps {
 }
 
 export function SettingsScreen({ settings, onSettingsChange, onClose }: SettingsScreenProps) {
+  const { colors, themePreference, setThemePreference, systemTheme } = useTheme();
   const [localSettings, setLocalSettings] = useState<Settings>(settings);
   const [showExportModal, setShowExportModal] = useState(false);
 
@@ -63,7 +65,7 @@ export function SettingsScreen({ settings, onSettingsChange, onClose }: Settings
               volume: 80,
               autoStartBreaks: false,
               autoStartWorkSessions: false,
-              theme: 'light',
+              theme: 'auto',
               goals: DefaultGoals,
             };
             setLocalSettings(defaultSettings);
@@ -74,15 +76,15 @@ export function SettingsScreen({ settings, onSettingsChange, onClose }: Settings
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Settings</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Settings</Text>
         <View style={styles.headerButtons}>
-          <TouchableOpacity onPress={handleSave} style={styles.headerButton}>
-            <Save size={18} color={Colors.text} strokeWidth={2} />
+          <TouchableOpacity onPress={handleSave} style={[styles.headerButton, { backgroundColor: colors.surface }]}>
+            <Save size={18} color={colors.text} strokeWidth={2} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onClose} style={styles.headerButton}>
-          <X size={20} color={Colors.text} strokeWidth={2} />
+          <TouchableOpacity onPress={onClose} style={[styles.headerButton, { backgroundColor: colors.surface }]}>
+          <X size={20} color={colors.text} strokeWidth={2} />
         </TouchableOpacity>
         </View>
       </View>
@@ -90,10 +92,10 @@ export function SettingsScreen({ settings, onSettingsChange, onClose }: Settings
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Timer Durations */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Timer Durations</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Timer Durations</Text>
           
-          <View style={styles.settingItem}>
-            <Text style={styles.settingLabel}>Work Session</Text>
+          <View style={[styles.settingItem, { borderBottomColor: colors.muted + '10' }]}>
+            <Text style={[styles.settingLabel, { color: colors.text }]}>Work Session</Text>
             <DurationPicker
               value={localSettings.workDuration}
               onChange={(value: number) => updateSetting('workDuration', value)}
@@ -103,8 +105,8 @@ export function SettingsScreen({ settings, onSettingsChange, onClose }: Settings
             />
           </View>
 
-          <View style={styles.settingItem}>
-            <Text style={styles.settingLabel}>Short Break</Text>
+          <View style={[styles.settingItem, { borderBottomColor: colors.muted + '10' }]}>
+            <Text style={[styles.settingLabel, { color: colors.text }]}>Short Break</Text>
             <DurationPicker
               value={localSettings.shortBreakDuration}
               onChange={(value: number) => updateSetting('shortBreakDuration', value)}
@@ -114,8 +116,8 @@ export function SettingsScreen({ settings, onSettingsChange, onClose }: Settings
             />
           </View>
 
-          <View style={styles.settingItem}>
-            <Text style={styles.settingLabel}>Long Break</Text>
+          <View style={[styles.settingItem, { borderBottomColor: colors.muted + '10' }]}>
+            <Text style={[styles.settingLabel, { color: colors.text }]}>Long Break</Text>
             <DurationPicker
               value={localSettings.longBreakDuration}
               onChange={(value: number) => updateSetting('longBreakDuration', value)}
@@ -125,8 +127,8 @@ export function SettingsScreen({ settings, onSettingsChange, onClose }: Settings
             />
           </View>
 
-          <View style={styles.settingItem}>
-            <Text style={styles.settingLabel}>Cycle Duration</Text>
+          <View style={[styles.settingItem, { borderBottomColor: colors.muted + '10' }]}>
+            <Text style={[styles.settingLabel, { color: colors.text }]}>Cycle Duration</Text>
             <DurationPicker
               value={localSettings.cycleDuration}
               onChange={(value: number) => updateSetting('cycleDuration', value)}
@@ -139,67 +141,153 @@ export function SettingsScreen({ settings, onSettingsChange, onClose }: Settings
 
         {/* Auto-Start Options */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Auto-Start</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Auto-Start</Text>
           
-          <View style={styles.settingItem}>
+          <View style={[styles.settingItem, { borderBottomColor: colors.muted + '10' }]}>
             <View style={styles.switchContainer}>
-              <Text style={styles.settingLabel}>Auto-start breaks</Text>
-              <Text style={styles.settingDescription}>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>Auto-start breaks</Text>
+              <Text style={[styles.settingDescription, { color: colors.muted }]}>
                 Automatically start break sessions when work completes
               </Text>
             </View>
             <Switch
               value={localSettings.autoStartBreaks}
               onValueChange={(value: boolean) => updateSetting('autoStartBreaks', value)}
-              trackColor={{ false: Colors.muted + '40', true: Colors.primary }}
-              thumbColor={Colors.white}
+              trackColor={{ false: colors.muted + '40', true: colors.primary }}
+              thumbColor={colors.white}
             />
           </View>
 
-          <View style={styles.settingItem}>
+          <View style={[styles.settingItem, { borderBottomColor: colors.muted + '10' }]}>
             <View style={styles.switchContainer}>
-              <Text style={styles.settingLabel}>Auto-start work sessions</Text>
-              <Text style={styles.settingDescription}>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>Auto-start work sessions</Text>
+              <Text style={[styles.settingDescription, { color: colors.muted }]}>
                 Automatically start work sessions when breaks complete
               </Text>
             </View>
             <Switch
               value={localSettings.autoStartWorkSessions}
               onValueChange={(value: boolean) => updateSetting('autoStartWorkSessions', value)}
-              trackColor={{ false: Colors.muted + '40', true: Colors.primary }}
-              thumbColor={Colors.white}
+              trackColor={{ false: colors.muted + '40', true: colors.primary }}
+              thumbColor={colors.white}
             />
           </View>
         </View>
 
         {/* Sound & Notifications */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sound & Notifications</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Sound & Notifications</Text>
           
-          <View style={styles.settingItem}>
+          <View style={[styles.settingItem, { borderBottomColor: colors.muted + '10' }]}>
             <View style={styles.switchContainer}>
-              <Text style={styles.settingLabel}>Sound notifications</Text>
-              <Text style={styles.settingDescription}>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>Sound notifications</Text>
+              <Text style={[styles.settingDescription, { color: colors.muted }]}>
                 Play sound when sessions complete
               </Text>
             </View>
             <Switch
               value={localSettings.soundEnabled}
               onValueChange={(value: boolean) => updateSetting('soundEnabled', value)}
-              trackColor={{ false: Colors.muted + '40', true: Colors.primary }}
-              thumbColor={Colors.white}
+              trackColor={{ false: colors.muted + '40', true: colors.primary }}
+              thumbColor={colors.white}
             />
           </View>
 
           {localSettings.soundEnabled && (
-            <View style={styles.settingItem}>
-              <Text style={styles.settingLabel}>Volume</Text>
+            <View style={[styles.settingItem, { borderBottomColor: colors.muted + '10' }]}>
+              <Text style={[styles.settingLabel, { color: colors.text }]}>Volume</Text>
               <VolumeSlider
                 value={localSettings.volume}
                 onChange={(value: number) => updateSetting('volume', value)}
               />
             </View>
           )}
+        </View>
+
+        {/* Appearance */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Appearance</Text>
+          
+          <View style={styles.themeContainer}>
+            <Text style={[styles.settingLabel, { color: colors.text }]}>Theme</Text>
+            <Text style={[styles.settingDescription, { color: colors.muted, marginBottom: Spacing.md }]}>
+              Choose your preferred app appearance
+            </Text>
+            
+            <View style={styles.themeOptions}>
+              {/* Auto Theme */}
+              <TouchableOpacity
+                style={[
+                  styles.themeOption,
+                  { 
+                    backgroundColor: colors.surface, 
+                    borderColor: themePreference === 'auto' ? colors.primary : colors.border,
+                    borderWidth: 2 
+                  }
+                ]}
+                onPress={() => {
+                  setThemePreference('auto');
+                  updateSetting('theme', 'auto');
+                }}
+              >
+                <View style={[styles.themeIcon, { backgroundColor: colors.primary + '20' }]}>
+                  <Smartphone size={20} color={colors.primary} strokeWidth={2} />
+                </View>
+                <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Auto</Text>
+                <Text style={[styles.themeOptionSubtitle, { color: colors.muted }]}>
+                  Follow system
+                </Text>
+              </TouchableOpacity>
+
+              {/* Light Theme */}
+              <TouchableOpacity
+                style={[
+                  styles.themeOption,
+                  { 
+                    backgroundColor: colors.surface, 
+                    borderColor: themePreference === 'light' ? colors.primary : colors.border,
+                    borderWidth: 2 
+                  }
+                ]}
+                onPress={() => {
+                  setThemePreference('light');
+                  updateSetting('theme', 'light');
+                }}
+              >
+                <View style={[styles.themeIcon, { backgroundColor: colors.accent + '20' }]}>
+                  <Sun size={20} color={colors.accent} strokeWidth={2} />
+                </View>
+                <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Light</Text>
+                <Text style={[styles.themeOptionSubtitle, { color: colors.muted }]}>
+                  Always light mode
+                </Text>
+              </TouchableOpacity>
+
+              {/* Dark Theme */}
+              <TouchableOpacity
+                style={[
+                  styles.themeOption,
+                  { 
+                    backgroundColor: colors.surface, 
+                    borderColor: themePreference === 'dark' ? colors.primary : colors.border,
+                    borderWidth: 2 
+                  }
+                ]}
+                onPress={() => {
+                  setThemePreference('dark');
+                  updateSetting('theme', 'dark');
+                }}
+              >
+                <View style={[styles.themeIcon, { backgroundColor: colors.secondary + '20' }]}>
+                  <Moon size={20} color={colors.secondary} strokeWidth={2} />
+                </View>
+                <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Dark</Text>
+                <Text style={[styles.themeOptionSubtitle, { color: colors.muted }]}>
+                  Always dark mode
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
 
         {/* Goals & Targets */}
@@ -210,30 +298,30 @@ export function SettingsScreen({ settings, onSettingsChange, onClose }: Settings
 
         {/* Data Export */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Data & Privacy</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Data & Privacy</Text>
           
           <TouchableOpacity 
-            style={styles.exportButton} 
+            style={[styles.exportButton, { backgroundColor: colors.surface, borderColor: colors.border }]} 
             onPress={() => setShowExportModal(true)}
           >
             <View style={styles.exportButtonContent}>
-              <Download size={18} color={Colors.primary} strokeWidth={2} />
+              <Download size={18} color={colors.primary} strokeWidth={2} />
               <View style={styles.exportButtonTexts}>
-                <Text style={styles.exportButtonLabel}>Export Data</Text>
-                <Text style={styles.exportButtonDescription}>
+                <Text style={[styles.exportButtonLabel, { color: colors.text }]}>Export Data</Text>
+                <Text style={[styles.exportButtonDescription, { color: colors.muted }]}>
                   Download your productivity data for backup or analysis
                 </Text>
               </View>
             </View>
-            <Share size={16} color={Colors.muted} strokeWidth={2} />
+            <Share size={16} color={colors.muted} strokeWidth={2} />
           </TouchableOpacity>
         </View>
 
         {/* Reset Button */}
         <View style={styles.section}>
-          <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-            <RotateCcw size={18} color="#e74c3c" strokeWidth={2} />
-            <Text style={styles.resetButtonText}>Reset to Defaults</Text>
+          <TouchableOpacity style={[styles.resetButton, { backgroundColor: colors.surface, borderColor: colors.error }]} onPress={handleReset}>
+            <RotateCcw size={18} color={colors.error} strokeWidth={2} />
+            <Text style={[styles.resetButtonText, { color: colors.error }]}>Reset to Defaults</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -249,7 +337,6 @@ export function SettingsScreen({ settings, onSettingsChange, onClose }: Settings
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -262,7 +349,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.sizes.header,
     fontFamily: Typography.families.black,
-    color: Colors.text,
   },
   headerButtons: {
     flexDirection: 'row',
@@ -272,10 +358,8 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -291,7 +375,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.sizes.header - 2,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
     marginBottom: Spacing.md,
   },
   settingItem: {
@@ -300,17 +383,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.muted + '10',
   },
   settingLabel: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
   settingDescription: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.regular,
-    color: Colors.muted,
     marginTop: 2,
   },
   switchContainer: {
@@ -321,9 +401,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.white,
     borderWidth: 2,
-    borderColor: '#e74c3c',
     borderRadius: 25,
     paddingVertical: Spacing.md,
     marginTop: Spacing.lg,
@@ -333,17 +411,14 @@ const styles = StyleSheet.create({
   resetButtonText: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: '#e74c3c',
   },
   exportButton: {
-    backgroundColor: Colors.white,
     borderRadius: 12,
     padding: Spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: Colors.muted + '20',
   },
   exportButtonContent: {
     flexDirection: 'row',
@@ -357,12 +432,45 @@ const styles = StyleSheet.create({
   exportButtonLabel: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
   exportButtonDescription: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.regular,
-    color: Colors.muted,
     marginTop: 2,
+  },
+  // Theme Selection Styles
+  themeContainer: {
+    paddingVertical: Spacing.sm,
+  },
+  themeOptions: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+  },
+  themeOption: {
+    flex: 1,
+    padding: Spacing.md,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 100,
+  },
+  themeIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.sm,
+  },
+  themeOptionTitle: {
+    fontSize: Typography.sizes.body,
+    fontFamily: Typography.families.bold,
+    marginBottom: 2,
+  },
+  themeOptionSubtitle: {
+    fontSize: Typography.sizes.caption,
+    fontFamily: Typography.families.regular,
+    textAlign: 'center',
   },
 }); 

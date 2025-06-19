@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
-import { Colors } from '../constants';
+
 import { TimerScreen } from './TimerScreen';
 import { SettingsScreen } from './SettingsScreen';
 import { StatisticsScreen } from './StatisticsScreen';
 import { useTimer } from '../contexts/TimerContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 export function MainScreen() {
+  const { colors, isDark } = useTheme();
   const [showSettings, setShowSettings] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
   const { settings, updateSettings } = useTimer();
@@ -32,8 +34,11 @@ export function MainScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar 
+        barStyle={isDark ? "light-content" : "dark-content"} 
+        backgroundColor={colors.background} 
+      />
       
       {showSettings ? (
         <SettingsScreen
@@ -56,6 +61,5 @@ export function MainScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
 }); 

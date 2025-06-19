@@ -39,10 +39,10 @@ A focused productivity app implementing the Pomodoro Technique, helping users ma
 - Productivity streak tracking
 - Time spent in focus vs breaks
 - Export data functionality
-- Goal setting (daily Pomodoro targets)
+- Goal setting (daily Pomodoro cycle targets)
 
 ### Phase 4: Enhanced Features
-- Task integration (add tasks to Pomodoros)
+- Task integration (add tasks to Pomodoro cycles)
 - Ambient background sounds/white noise
 - Dark/light theme toggle
 - Keyboard shortcuts

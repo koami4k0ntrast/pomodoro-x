@@ -22,8 +22,9 @@ import {
 } from 'lucide-react-native';
 import { DailyStats, Session } from '../types';
 import { StorageService } from '../utils/storage';
-import { Colors, Spacing, Typography, PredefinedCategories } from '../constants';
+import { Spacing, Typography, PredefinedCategories } from '../constants';
 import { useTimer } from '../contexts/TimerContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface StatisticsScreenProps {
   onClose: () => void;
@@ -45,6 +46,7 @@ interface StatsOverview {
 const { width } = Dimensions.get('window');
 
 export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
+  const { colors, isDark } = useTheme();
   const { refreshStats } = useTimer();
   const [timeRange, setTimeRange] = useState<TimeRange>('today');
   const [stats, setStats] = useState<DailyStats[]>([]);
@@ -248,17 +250,17 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
     title: string,
     value: string,
     subtitle?: string,
-    color: string = Colors.primary
+    color: string = colors.primary
   ) => (
-    <View style={[styles.statCard, { borderLeftColor: color }]}>
+    <View style={[styles.statCard, { backgroundColor: colors.surface, borderLeftColor: color, shadowColor: colors.shadow }]}>
       <View style={styles.statHeader}>
         <View style={[styles.statIcon, { backgroundColor: color + '20' }]}>
           {icon}
         </View>
-        <Text style={styles.statTitle}>{title}</Text>
+        <Text style={[styles.statTitle, { color: colors.text }]}>{title}</Text>
       </View>
       <Text style={[styles.statValue, { color }]}>{value}</Text>
-      {subtitle && <Text style={styles.statSubtitle}>{subtitle}</Text>}
+      {subtitle && <Text style={[styles.statSubtitle, { color: colors.muted }]}>{subtitle}</Text>}
     </View>
   );
 
@@ -284,8 +286,8 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
     const totalScrollWidth = (barWidth + barSpacing) * chartData.length - barSpacing + (Spacing.lg * 2);
 
     return (
-      <View style={styles.chartContainer}>
-        <Text style={styles.chartTitle}>Daily Progress</Text>
+      <View style={[styles.chartContainer, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
+        <Text style={[styles.chartTitle, { color: colors.text }]}>Daily Progress</Text>
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false}
@@ -313,15 +315,15 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
                       {
                         height: `${height}%`,
                         width: 32,
-                        backgroundColor: item.isActive ? Colors.primary : Colors.muted,
+                        backgroundColor: item.isActive ? colors.primary : colors.muted,
                       },
                     ]}
                   />
                 </View>
-                <Text style={styles.barLabel} numberOfLines={2} ellipsizeMode="tail">
+                <Text style={[styles.barLabel, { color: colors.muted }]} numberOfLines={2} ellipsizeMode="tail">
                   {item.label}
                 </Text>
-                <Text style={styles.barValue} numberOfLines={1}>
+                <Text style={[styles.barValue, { color: colors.text }]} numberOfLines={1}>
                   {displayValue}
                 </Text>
               </View>
@@ -345,45 +347,45 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
     // Calculate balance insight
     const getBalanceInsight = () => {
       if (focusPercentage >= 75) {
-        return { text: "High focus ratio - consider more breaks", color: Colors.accent };
+        return { text: "High focus ratio - consider more breaks", color: colors.accent };
       } else if (focusPercentage >= 65) {
-        return { text: "Great focus balance!", color: Colors.secondary };
+        return { text: "Great focus balance!", color: colors.secondary };
       } else if (focusPercentage >= 50) {
-        return { text: "Balanced focus and break time", color: Colors.secondary };
+        return { text: "Balanced focus and break time", color: colors.secondary };
       } else {
-        return { text: "More focus time recommended", color: Colors.primary };
+        return { text: "More focus time recommended", color: colors.primary };
       }
     };
 
     const balanceInsight = getBalanceInsight();
 
     return (
-      <View style={styles.focusVsBreakCard}>
+      <View style={[styles.focusVsBreakCard, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
         <View style={styles.focusVsBreakHeader}>
-          <BarChart3 size={20} color={Colors.primary} strokeWidth={2} />
-          <Text style={styles.focusVsBreakTitle}>Focus vs Break Time</Text>
+          <BarChart3 size={20} color={colors.primary} strokeWidth={2} />
+          <Text style={[styles.focusVsBreakTitle, { color: colors.text }]}>Focus vs Break Time</Text>
         </View>
         
         <View style={styles.focusVsBreakContent}>
           <View style={styles.timeComparisonRow}>
             <View style={styles.timeComparisonItem}>
-              <Text style={styles.timeComparisonLabel}>Focus</Text>
-              <Text style={[styles.timeComparisonValue, { color: Colors.primary }]}>
+              <Text style={[styles.timeComparisonLabel, { color: colors.muted }]}>Focus</Text>
+              <Text style={[styles.timeComparisonValue, { color: colors.primary }]}>
                 {focusPercentage}%
               </Text>
-              <Text style={styles.timeComparisonTime}>
+              <Text style={[styles.timeComparisonTime, { color: colors.muted }]}>
                 {formatTime(overview.totalFocusTime)}
               </Text>
             </View>
             
-            <View style={styles.timeComparisonDivider} />
+            <View style={[styles.timeComparisonDivider, { backgroundColor: colors.background }]} />
             
             <View style={styles.timeComparisonItem}>
-              <Text style={styles.timeComparisonLabel}>Break</Text>
-              <Text style={[styles.timeComparisonValue, { color: Colors.secondary }]}>
+              <Text style={[styles.timeComparisonLabel, { color: colors.muted }]}>Break</Text>
+              <Text style={[styles.timeComparisonValue, { color: colors.secondary }]}>
                 {breakPercentage}%
               </Text>
-              <Text style={styles.timeComparisonTime}>
+              <Text style={[styles.timeComparisonTime, { color: colors.muted }]}>
                 {formatTime(overview.totalBreakTime)}
               </Text>
             </View>
@@ -391,13 +393,13 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
           
           {/* Visual ratio bar */}
           <View style={styles.ratioBarContainer}>
-            <View style={styles.ratioBar}>
+            <View style={[styles.ratioBar, { backgroundColor: colors.background }]}>
               <View 
                 style={[
                   styles.ratioBarFocus, 
                   { 
                     width: `${focusPercentage}%`,
-                    backgroundColor: Colors.primary
+                    backgroundColor: colors.primary
                   }
                 ]} 
               />
@@ -406,7 +408,7 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
                   styles.ratioBarBreak, 
                   { 
                     width: `${breakPercentage}%`,
-                    backgroundColor: Colors.secondary
+                    backgroundColor: colors.secondary
                   }
                 ]} 
               />
@@ -434,8 +436,8 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
     }
 
     return (
-      <View style={styles.additionalStats}>
-        <Text style={styles.sectionTitle}>Top Categories</Text>
+      <View style={[styles.additionalStats, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Top Categories</Text>
         {categoryEntries.map(([categoryId, sessions]) => {
           const categoryData = PredefinedCategories.find(cat => cat.id === categoryId);
           const percentage = overview.totalCycles > 0 
@@ -443,8 +445,8 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
             : 0;
 
           return (
-            <View key={categoryId} style={styles.breakdownItem}>
-              <View style={styles.breakdownIcon}>
+            <View key={categoryId} style={[styles.breakdownItem, { borderBottomColor: colors.background }]}>
+              <View style={[styles.breakdownIcon, { backgroundColor: colors.background }]}>
                 {categoryData && (
                   <View style={[{ width: 16, height: 16, borderRadius: 8, alignItems: 'center', justifyContent: 'center' }, { backgroundColor: categoryData.color }]}>
                     <Text style={{ fontSize: 10 }}>{categoryData.icon}</Text>
@@ -452,10 +454,10 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
                 )}
               </View>
               <View style={styles.breakdownContent}>
-                <Text style={styles.breakdownLabel}>
+                <Text style={[styles.breakdownLabel, { color: colors.text }]}>
                   {categoryData?.name || categoryId}
                 </Text>
-                <Text style={styles.breakdownValue}>{sessions} cycles ({percentage}%)</Text>
+                <Text style={[styles.breakdownValue, { color: colors.text }]}>{sessions} cycles ({percentage}%)</Text>
               </View>
             </View>
           );
@@ -465,18 +467,21 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar 
+        barStyle={isDark ? "light-content" : "dark-content"} 
+        backgroundColor={colors.background} 
+      />
       
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Statistics</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Statistics</Text>
         <View style={styles.headerButtons}>
-          <TouchableOpacity style={styles.headerButton} onPress={handleResetStats}>
-            <RotateCcw size={18} color={Colors.text} strokeWidth={2} />
+          <TouchableOpacity style={[styles.headerButton, { backgroundColor: colors.surface }]} onPress={handleResetStats}>
+            <RotateCcw size={18} color={colors.text} strokeWidth={2} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerButton} onPress={onClose}>
-            <X size={20} color={Colors.text} strokeWidth={2} />
+          <TouchableOpacity style={[styles.headerButton, { backgroundColor: colors.surface }]} onPress={onClose}>
+            <X size={20} color={colors.text} strokeWidth={2} />
           </TouchableOpacity>
         </View>
       </View>
@@ -488,14 +493,16 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
             key={range}
             style={[
               styles.timeRangeButton,
-              timeRange === range && styles.timeRangeButtonActive,
+              { backgroundColor: colors.surface, shadowColor: colors.shadow },
+              timeRange === range && { backgroundColor: colors.primary },
             ]}
             onPress={() => setTimeRange(range)}
           >
             <Text
               style={[
                 styles.timeRangeText,
-                timeRange === range && styles.timeRangeTextActive,
+                { color: colors.text },
+                timeRange === range && { color: colors.background },
               ]}
             >
               {range.charAt(0).toUpperCase() + range.slice(1)}
@@ -508,25 +515,25 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
         {/* Overview Cards */}
         <View style={styles.statsGrid}>
                      {renderStatCard(
-             <Target size={20} color={Colors.primary} strokeWidth={2} />,
+             <Target size={20} color={colors.primary} strokeWidth={2} />,
              'Cycles',
              overview.totalCycles > 999 ? '999+' : overview.totalCycles.toString(),
              getTimeRangeTitle(),
-             Colors.primary
+             colors.primary
            )}
           {renderStatCard(
-            <Clock size={20} color={Colors.secondary} strokeWidth={2} />,
+            <Clock size={20} color={colors.secondary} strokeWidth={2} />,
             'Focus Time',
             formatTime(overview.totalFocusTime),
             `Avg: ${formatTime(overview.averageSessionLength)}`,
-            Colors.secondary
+            colors.secondary
           )}
           {renderStatCard(
-            <TrendingUp size={20} color={Colors.accent} strokeWidth={2} />,
+            <TrendingUp size={20} color={colors.accent} strokeWidth={2} />,
             'Completion Rate',
             `${overview.completionRate}%`,
             `${stats.filter(d => d.completedCycles > 0).length} active days`,
-            Colors.accent
+            colors.accent
           )}
           {renderStatCard(
             <Award size={20} color="#f39c12" strokeWidth={2} />,
@@ -544,28 +551,28 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
         {renderChart()}
 
         {/* Additional Stats */}
-        <View style={styles.additionalStats}>
-          <Text style={styles.sectionTitle}>Additional Insights</Text>
+        <View style={[styles.additionalStats, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Additional Insights</Text>
           
-          <View style={styles.breakdownItem}>
-            <View style={styles.breakdownIcon}>
-              <BarChart3 size={16} color={Colors.accent} strokeWidth={2} />
+          <View style={[styles.breakdownItem, { borderBottomColor: colors.background }]}>
+            <View style={[styles.breakdownIcon, { backgroundColor: colors.background }]}>
+              <BarChart3 size={16} color={colors.accent} strokeWidth={2} />
             </View>
             <View style={styles.breakdownContent}>
-              <Text style={styles.breakdownLabel}>Average per Day</Text>
-              <Text style={styles.breakdownValue}>
+              <Text style={[styles.breakdownLabel, { color: colors.text }]}>Average per Day</Text>
+              <Text style={[styles.breakdownValue, { color: colors.text }]}>
                 {stats.length > 0 ? Math.min(Math.round(overview.totalCycles / stats.length), 99) : 0} cycles
               </Text>
             </View>
           </View>
 
-          <View style={styles.breakdownItem}>
-            <View style={styles.breakdownIcon}>
-              <Clock size={16} color={Colors.primary} strokeWidth={2} />
+          <View style={[styles.breakdownItem, { borderBottomColor: colors.background }]}>
+            <View style={[styles.breakdownIcon, { backgroundColor: colors.background }]}>
+              <Clock size={16} color={colors.primary} strokeWidth={2} />
             </View>
             <View style={styles.breakdownContent}>
-              <Text style={styles.breakdownLabel}>Total Session Time</Text>
-              <Text style={styles.breakdownValue}>
+              <Text style={[styles.breakdownLabel, { color: colors.text }]}>Total Session Time</Text>
+              <Text style={[styles.breakdownValue, { color: colors.text }]}>
                 {formatTime(overview.totalFocusTime + overview.totalBreakTime)}
               </Text>
             </View>
@@ -582,7 +589,6 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -595,7 +601,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.sizes.header,
     fontFamily: Typography.families.black,
-    color: Colors.text,
   },
   headerButtons: {
     flexDirection: 'row',
@@ -605,10 +610,9 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.shadow,
+    // shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -624,25 +628,16 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     borderRadius: 20,
-    backgroundColor: Colors.white,
     marginHorizontal: 4,
     alignItems: 'center',
-    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
   },
-  timeRangeButtonActive: {
-    backgroundColor: Colors.primary,
-  },
   timeRangeText: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
-  },
-  timeRangeTextActive: {
-    color: Colors.white,
   },
   content: {
     flex: 1,
@@ -652,12 +647,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   statCard: {
-    backgroundColor: Colors.white,
     borderRadius: 12,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
     borderLeftWidth: 4,
-    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -679,7 +672,6 @@ const styles = StyleSheet.create({
   statTitle: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
   statValue: {
     fontSize: Typography.sizes.header,
@@ -688,15 +680,12 @@ const styles = StyleSheet.create({
   },
   statSubtitle: {
     fontSize: Typography.sizes.caption,
-    color: Colors.muted,
     fontFamily: Typography.families.regular,
   },
   chartContainer: {
-    backgroundColor: Colors.white,
     borderRadius: 12,
     padding: Spacing.lg,
     marginBottom: Spacing.xl,
-    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -705,7 +694,6 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: Typography.sizes.header,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
     marginBottom: Spacing.lg,
   },
   chartScroll: {
@@ -738,7 +726,6 @@ const styles = StyleSheet.create({
   },
   barLabel: {
     fontSize: Typography.sizes.caption - 1, // Slightly smaller for better fit
-    color: Colors.muted,
     fontFamily: Typography.families.regular,
     textAlign: 'center',
     marginBottom: 2,
@@ -746,16 +733,13 @@ const styles = StyleSheet.create({
   },
   barValue: {
     fontSize: Typography.sizes.caption,
-    color: Colors.text,
     fontFamily: Typography.families.bold,
     textAlign: 'center',
   },
   additionalStats: {
-    backgroundColor: Colors.white,
     borderRadius: 12,
     padding: Spacing.lg,
     marginBottom: Spacing.xl,
-    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -764,7 +748,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.sizes.header,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
     marginBottom: Spacing.lg,
   },
   breakdownItem: {
@@ -772,13 +755,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background,
   },
   breakdownIcon: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Colors.background,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
@@ -792,20 +773,16 @@ const styles = StyleSheet.create({
   breakdownLabel: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.regular,
-    color: Colors.text,
   },
   breakdownValue: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
   // Focus vs Break Card Styles
   focusVsBreakCard: {
-    backgroundColor: Colors.white,
     borderRadius: 12,
     padding: Spacing.lg,
     marginBottom: Spacing.xl,
-    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -819,7 +796,6 @@ const styles = StyleSheet.create({
   focusVsBreakTitle: {
     fontSize: Typography.sizes.header,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
     marginLeft: Spacing.sm,
   },
   focusVsBreakContent: {
@@ -837,7 +813,6 @@ const styles = StyleSheet.create({
   timeComparisonLabel: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.regular,
-    color: Colors.muted,
     marginBottom: Spacing.xs,
   },
   timeComparisonValue: {
@@ -848,12 +823,10 @@ const styles = StyleSheet.create({
   timeComparisonTime: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.regular,
-    color: Colors.muted,
   },
   timeComparisonDivider: {
     width: 1,
     height: 40,
-    backgroundColor: Colors.background,
     marginHorizontal: Spacing.md,
   },
   ratioBarContainer: {
@@ -864,7 +837,6 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     overflow: 'hidden',
-    backgroundColor: Colors.background,
   },
   ratioBarFocus: {
     height: '100%',

@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Target, TrendingUp, Award, Calendar } from 'lucide-react-native';
-import { Colors, Spacing, Typography } from '../constants';
+import { Spacing, Typography } from '../constants';
 import { Goals } from '../types';
 import { DurationPicker } from './DurationPicker';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface GoalSettingsProps {
   goals: Goals;
@@ -11,16 +12,18 @@ interface GoalSettingsProps {
 }
 
 export function GoalSettings({ goals, onGoalChange }: GoalSettingsProps) {
+  const { colors } = useTheme();
+  
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Goals & Targets</Text>
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>Goals & Targets</Text>
       
-      <View style={styles.goalItem}>
+      <View style={[styles.goalItem, { borderBottomColor: colors.muted + '10' }]}>
         <View style={styles.goalHeader}>
-          <Target size={20} color={Colors.primary} strokeWidth={2} />
+          <Target size={20} color={colors.primary} strokeWidth={2} />
           <View style={styles.goalInfo}>
-            <Text style={styles.goalLabel}>Daily Cycles</Text>
-            <Text style={styles.goalDescription}>
+            <Text style={[styles.goalLabel, { color: colors.text }]}>Daily Cycles</Text>
+            <Text style={[styles.goalDescription, { color: colors.muted }]}>
               Target number of cycles per day
             </Text>
           </View>
@@ -34,12 +37,12 @@ export function GoalSettings({ goals, onGoalChange }: GoalSettingsProps) {
         />
       </View>
 
-      <View style={styles.goalItem}>
+      <View style={[styles.goalItem, { borderBottomColor: colors.muted + '10' }]}>
         <View style={styles.goalHeader}>
-          <Calendar size={20} color={Colors.secondary} strokeWidth={2} />
+          <Calendar size={20} color={colors.secondary} strokeWidth={2} />
           <View style={styles.goalInfo}>
-            <Text style={styles.goalLabel}>Weekly Cycles</Text>
-            <Text style={styles.goalDescription}>
+            <Text style={[styles.goalLabel, { color: colors.text }]}>Weekly Cycles</Text>
+            <Text style={[styles.goalDescription, { color: colors.muted }]}>
               Target number of cycles per week
             </Text>
           </View>
@@ -53,12 +56,12 @@ export function GoalSettings({ goals, onGoalChange }: GoalSettingsProps) {
         />
       </View>
 
-      <View style={styles.goalItem}>
+      <View style={[styles.goalItem, { borderBottomColor: colors.muted + '10' }]}>
         <View style={styles.goalHeader}>
-          <TrendingUp size={20} color={Colors.accent} strokeWidth={2} />
+          <TrendingUp size={20} color={colors.accent} strokeWidth={2} />
           <View style={styles.goalInfo}>
-            <Text style={styles.goalLabel}>Daily Focus Time</Text>
-            <Text style={styles.goalDescription}>
+            <Text style={[styles.goalLabel, { color: colors.text }]}>Daily Focus Time</Text>
+            <Text style={[styles.goalDescription, { color: colors.muted }]}>
               Target focus time in minutes per day
             </Text>
           </View>
@@ -72,12 +75,12 @@ export function GoalSettings({ goals, onGoalChange }: GoalSettingsProps) {
         />
       </View>
 
-      <View style={styles.goalItem}>
+      <View style={[styles.goalItem, { borderBottomColor: colors.muted + '10' }]}>
         <View style={styles.goalHeader}>
-          <Award size={20} color="#f39c12" strokeWidth={2} />
+          <Award size={20} color={colors.warning} strokeWidth={2} />
           <View style={styles.goalInfo}>
-            <Text style={styles.goalLabel}>Streak Target</Text>
-            <Text style={styles.goalDescription}>
+            <Text style={[styles.goalLabel, { color: colors.text }]}>Streak Target</Text>
+            <Text style={[styles.goalDescription, { color: colors.muted }]}>
               Target consecutive days to maintain
             </Text>
           </View>
@@ -91,15 +94,15 @@ export function GoalSettings({ goals, onGoalChange }: GoalSettingsProps) {
         />
       </View>
 
-      <View style={styles.tipContainer}>
-        <Text style={styles.tipTitle}>💡 Goal Setting Tips</Text>
-        <Text style={styles.tipText}>
+      <View style={[styles.tipContainer, { backgroundColor: colors.accent + '10', borderLeftColor: colors.accent }]}>
+        <Text style={[styles.tipTitle, { color: colors.text }]}>💡 Goal Setting Tips</Text>
+        <Text style={[styles.tipText, { color: colors.text }]}>
           • Start with achievable goals and gradually increase
         </Text>
-        <Text style={styles.tipText}>
+        <Text style={[styles.tipText, { color: colors.text }]}>
           • Daily focus time = Daily cycles × Work duration
         </Text>
-        <Text style={styles.tipText}>
+        <Text style={[styles.tipText, { color: colors.text }]}>
           • Consistent small goals are better than unrealistic big ones
         </Text>
       </View>
@@ -114,7 +117,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.sizes.header - 2,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
     marginBottom: Spacing.lg,
   },
   goalItem: {
@@ -123,7 +125,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.muted + '10',
   },
   goalHeader: {
     flexDirection: 'row',
@@ -133,36 +134,31 @@ const styles = StyleSheet.create({
   },
   goalInfo: {
     flex: 1,
+    marginRight: Spacing.lg,
   },
   goalLabel: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
   goalDescription: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.regular,
-    color: Colors.muted,
     marginTop: 2,
   },
   tipContainer: {
     marginTop: Spacing.xl,
     padding: Spacing.lg,
-    backgroundColor: Colors.accent + '10',
     borderRadius: 12,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.accent,
   },
   tipTitle: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
     marginBottom: Spacing.sm,
   },
   tipText: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.regular,
-    color: Colors.text,
     marginBottom: Spacing.xs,
     lineHeight: 18,
   },

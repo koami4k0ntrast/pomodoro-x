@@ -3,6 +3,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { TimerProvider } from './src/contexts/TimerContext';
+import { ThemeProvider } from './src/contexts/ThemeContext';
 import { MainScreen } from './src/components/MainScreen';
 
 // Keep the splash screen visible while we fetch resources
@@ -26,8 +27,10 @@ export default function App() {
   }
 
   return (
-    <TimerProvider>
-      <MainScreen />
-    </TimerProvider>
+    <ThemeProvider>
+      <TimerProvider>
+        <MainScreen />
+      </TimerProvider>
+    </ThemeProvider>
   );
 }

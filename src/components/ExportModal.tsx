@@ -11,8 +11,9 @@ import {
   Modal,
 } from 'react-native';
 import { X, Download, FileText, Database, Calendar, Settings, Target } from 'lucide-react-native';
-import { Colors, Typography, Spacing } from '../constants';
+import { Typography, Spacing } from '../constants';
 import { DataExportService, ExportOptions } from '../utils/dataExport';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface ExportModalProps {
   visible: boolean;
@@ -20,6 +21,7 @@ interface ExportModalProps {
 }
 
 export function ExportModal({ visible, onClose }: ExportModalProps) {
+  const { colors } = useTheme();
   const [options, setOptions] = useState<ExportOptions>({
     format: 'json',
     dateRange: 'all',
@@ -88,40 +90,66 @@ export function ExportModal({ visible, onClose }: ExportModalProps) {
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Export Data</Text>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <X size={20} color={Colors.text} strokeWidth={2} />
-          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>Export Data</Text>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity onPress={onClose} style={[styles.headerButton, { backgroundColor: colors.surface /*, shadowColor: colors.shadow */}]}>
+              <X size={20} color={colors.text} strokeWidth={2} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Export Format */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Export Format</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Export Format</Text>
             <View style={styles.formatOptions}>
               <TouchableOpacity
-                style={[styles.formatOption, options.format === 'json' && styles.formatOptionActive]}
+                style={[
+                  styles.formatOption, 
+                  { backgroundColor: colors.surface, borderColor: colors.primary + '20' },
+                  options.format === 'json' && { backgroundColor: colors.primary, borderColor: colors.primary }
+                ]}
                 onPress={() => updateOption('format', 'json')}
               >
-                <FileText size={20} color={options.format === 'json' ? Colors.white : Colors.primary} />
-                <Text style={[styles.formatOptionText, options.format === 'json' && styles.formatOptionTextActive]}>
+                <FileText size={20} color={options.format === 'json' ? colors.background : colors.primary} />
+                <Text style={[
+                  styles.formatOptionText, 
+                  { color: colors.text },
+                  options.format === 'json' && { color: colors.background }
+                ]}>
                   JSON
                 </Text>
-                <Text style={[styles.formatOptionDescription, options.format === 'json' && styles.formatOptionDescriptionActive]}>
+                <Text style={[
+                  styles.formatOptionDescription, 
+                  { color: colors.muted },
+                  options.format === 'json' && { color: colors.background + 'CC' }
+                ]}>
                   Machine readable
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.formatOption, options.format === 'csv' && styles.formatOptionActive]}
+                style={[
+                  styles.formatOption, 
+                  { backgroundColor: colors.surface, borderColor: colors.primary + '20' },
+                  options.format === 'csv' && { backgroundColor: colors.primary, borderColor: colors.primary }
+                ]}
                 onPress={() => updateOption('format', 'csv')}
               >
-                <Database size={20} color={options.format === 'csv' ? Colors.white : Colors.primary} />
-                <Text style={[styles.formatOptionText, options.format === 'csv' && styles.formatOptionTextActive]}>
+                <Database size={20} color={options.format === 'csv' ? colors.background : colors.primary} />
+                <Text style={[
+                  styles.formatOptionText, 
+                  { color: colors.text },
+                  options.format === 'csv' && { color: colors.background }
+                ]}>
                   CSV
                 </Text>
-                <Text style={[styles.formatOptionDescription, options.format === 'csv' && styles.formatOptionDescriptionActive]}>
+                <Text style={[
+                  styles.formatOptionDescription, 
+                  { color: colors.muted },
+                  options.format === 'csv' && { color: colors.background + 'CC' }
+                ]}>
                   Spreadsheet friendly
                 </Text>
               </TouchableOpacity>
@@ -130,7 +158,7 @@ export function ExportModal({ visible, onClose }: ExportModalProps) {
 
           {/* Date Range */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Date Range</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Date Range</Text>
             <View style={styles.dateRangeOptions}>
               {[
                 { key: 'all', label: 'All Time', icon: Calendar },
@@ -139,11 +167,19 @@ export function ExportModal({ visible, onClose }: ExportModalProps) {
               ].map(({ key, label, icon: Icon }) => (
                 <TouchableOpacity
                   key={key}
-                  style={[styles.dateRangeOption, options.dateRange === key && styles.dateRangeOptionActive]}
+                  style={[
+                    styles.dateRangeOption, 
+                    { backgroundColor: colors.surface, borderColor: colors.border },
+                    options.dateRange === key && { borderColor: colors.primary, backgroundColor: colors.primary + '10' }
+                  ]}
                   onPress={() => updateOption('dateRange', key as ExportOptions['dateRange'])}
                 >
-                  <Icon size={16} color={options.dateRange === key ? Colors.primary : Colors.muted} />
-                  <Text style={[styles.dateRangeOptionText, options.dateRange === key && styles.dateRangeOptionTextActive]}>
+                  <Icon size={16} color={options.dateRange === key ? colors.primary : colors.muted} />
+                  <Text style={[
+                    styles.dateRangeOptionText, 
+                    { color: colors.text },
+                    options.dateRange === key && { fontFamily: Typography.families.bold, color: colors.primary }
+                  ]}>
                     {label}
                   </Text>
                 </TouchableOpacity>
@@ -153,14 +189,14 @@ export function ExportModal({ visible, onClose }: ExportModalProps) {
 
           {/* Data Types */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Include Data</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Include Data</Text>
             
-            <View style={styles.dataOption}>
+            <View style={[styles.dataOption, { backgroundColor: colors.surface }]}>
               <View style={styles.dataOptionInfo}>
-                <Settings size={18} color={Colors.text} />
+                <Settings size={18} color={colors.text} />
                 <View style={styles.dataOptionTexts}>
-                  <Text style={styles.dataOptionLabel}>Settings</Text>
-                  <Text style={styles.dataOptionDescription}>
+                  <Text style={[styles.dataOptionLabel, { color: colors.text }]}>Settings</Text>
+                  <Text style={[styles.dataOptionDescription, { color: colors.muted }]}>
                     Timer preferences and goals
                   </Text>
                 </View>
@@ -168,17 +204,17 @@ export function ExportModal({ visible, onClose }: ExportModalProps) {
               <Switch
                 value={options.includeSettings}
                 onValueChange={(value) => updateOption('includeSettings', value)}
-                trackColor={{ false: Colors.muted + '40', true: Colors.primary }}
-                thumbColor={Colors.white}
+                trackColor={{ false: colors.muted + '40', true: colors.primary }}
+                thumbColor={colors.white}
               />
             </View>
 
-            <View style={styles.dataOption}>
+            <View style={[styles.dataOption, { backgroundColor: colors.surface }]}>
               <View style={styles.dataOptionInfo}>
-                <FileText size={18} color={Colors.text} />
+                <FileText size={18} color={colors.text} />
                 <View style={styles.dataOptionTexts}>
-                  <Text style={styles.dataOptionLabel}>Session History</Text>
-                  <Text style={styles.dataOptionDescription}>
+                  <Text style={[styles.dataOptionLabel, { color: colors.text }]}>Session History</Text>
+                  <Text style={[styles.dataOptionDescription, { color: colors.muted }]}>
                     Individual timer sessions
                   </Text>
                 </View>
@@ -186,17 +222,17 @@ export function ExportModal({ visible, onClose }: ExportModalProps) {
               <Switch
                 value={options.includeSessions}
                 onValueChange={(value) => updateOption('includeSessions', value)}
-                trackColor={{ false: Colors.muted + '40', true: Colors.primary }}
-                thumbColor={Colors.white}
+                trackColor={{ false: colors.muted + '40', true: colors.primary }}
+                thumbColor={colors.white}
               />
             </View>
 
-            <View style={styles.dataOption}>
+            <View style={[styles.dataOption, { backgroundColor: colors.surface }]}>
               <View style={styles.dataOptionInfo}>
-                <Target size={18} color={Colors.text} />
+                <Target size={18} color={colors.text} />
                 <View style={styles.dataOptionTexts}>
-                  <Text style={styles.dataOptionLabel}>Pomodoro Cycles</Text>
-                  <Text style={styles.dataOptionDescription}>
+                  <Text style={[styles.dataOptionLabel, { color: colors.text }]}>Cycles</Text>
+                  <Text style={[styles.dataOptionDescription, { color: colors.muted }]}>
                     Complete cycles with labels and categories
                   </Text>
                 </View>
@@ -204,17 +240,17 @@ export function ExportModal({ visible, onClose }: ExportModalProps) {
               <Switch
                 value={options.includeCycles}
                 onValueChange={(value) => updateOption('includeCycles', value)}
-                trackColor={{ false: Colors.muted + '40', true: Colors.primary }}
-                thumbColor={Colors.white}
+                trackColor={{ false: colors.muted + '40', true: colors.primary }}
+                thumbColor={colors.white}
               />
             </View>
 
-            <View style={styles.dataOption}>
+            <View style={[styles.dataOption, { backgroundColor: colors.surface }]}>
               <View style={styles.dataOptionInfo}>
-                <Database size={18} color={Colors.text} />
+                <Database size={18} color={colors.text} />
                 <View style={styles.dataOptionTexts}>
-                  <Text style={styles.dataOptionLabel}>Statistics</Text>
-                  <Text style={styles.dataOptionDescription}>
+                  <Text style={[styles.dataOptionLabel, { color: colors.text }]}>Statistics</Text>
+                  <Text style={[styles.dataOptionDescription, { color: colors.muted }]}>
                     Daily summaries and streaks
                   </Text>
                 </View>
@@ -222,42 +258,42 @@ export function ExportModal({ visible, onClose }: ExportModalProps) {
               <Switch
                 value={options.includeStats}
                 onValueChange={(value) => updateOption('includeStats', value)}
-                trackColor={{ false: Colors.muted + '40', true: Colors.primary }}
-                thumbColor={Colors.white}
+                trackColor={{ false: colors.muted + '40', true: colors.primary }}
+                thumbColor={colors.white}
               />
             </View>
           </View>
 
           {/* Preview */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Export Preview</Text>
-            <View style={styles.previewCard}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Export Preview</Text>
+            <View style={[styles.previewCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               {loading ? (
                 <View style={styles.previewLoading}>
-                  <ActivityIndicator size="small" color={Colors.primary} />
-                  <Text style={styles.previewLoadingText}>Loading preview...</Text>
+                  <ActivityIndicator size="small" color={colors.primary} />
+                  <Text style={[styles.previewLoadingText, { color: colors.muted }]}>Loading preview...</Text>
                 </View>
               ) : preview ? (
                 <View style={styles.previewContent}>
                   <View style={styles.previewRow}>
-                    <Text style={styles.previewLabel}>Date Range:</Text>
-                    <Text style={styles.previewValue}>{preview.dateRange}</Text>
+                    <Text style={[styles.previewLabel, { color: colors.muted }]}>Date Range:</Text>
+                    <Text style={[styles.previewValue, { color: colors.text }]}>{preview.dateRange}</Text>
                   </View>
                   {options.includeSessions && (
                     <View style={styles.previewRow}>
-                      <Text style={styles.previewLabel}>Sessions:</Text>
-                      <Text style={styles.previewValue}>{preview.sessionsCount} sessions</Text>
+                      <Text style={[styles.previewLabel, { color: colors.muted }]}>Sessions:</Text>
+                      <Text style={[styles.previewValue, { color: colors.text }]}>{preview.sessionsCount} sessions</Text>
                     </View>
                   )}
                   {options.includeStats && (
                     <View style={styles.previewRow}>
-                      <Text style={styles.previewLabel}>Daily Stats:</Text>
-                      <Text style={styles.previewValue}>{preview.statsCount} days</Text>
+                      <Text style={[styles.previewLabel, { color: colors.muted }]}>Daily Stats:</Text>
+                      <Text style={[styles.previewValue, { color: colors.text }]}>{preview.statsCount} days</Text>
                     </View>
                   )}
                   <View style={styles.previewRow}>
-                    <Text style={styles.previewLabel}>Estimated Size:</Text>
-                    <Text style={styles.previewValue}>{preview.estimatedSize}</Text>
+                    <Text style={[styles.previewLabel, { color: colors.muted }]}>Estimated Size:</Text>
+                    <Text style={[styles.previewValue, { color: colors.text }]}>{preview.estimatedSize}</Text>
                   </View>
                 </View>
               ) : null}
@@ -266,18 +302,22 @@ export function ExportModal({ visible, onClose }: ExportModalProps) {
         </ScrollView>
 
         {/* Export Button */}
-        <View style={styles.footer}>
+        <View style={[styles.footer, { borderTopColor: colors.border }]}>
           <TouchableOpacity
-            style={[styles.exportButton, exporting && styles.exportButtonDisabled]}
+            style={[
+              styles.exportButton, 
+              { backgroundColor: colors.primary, shadowColor: colors.primary },
+              exporting && styles.exportButtonDisabled
+            ]}
             onPress={handleExport}
             disabled={exporting}
           >
             {exporting ? (
-              <ActivityIndicator size="small" color={Colors.white} />
+              <ActivityIndicator size="small" color={colors.background} />
             ) : (
-              <Download size={20} color={Colors.white} strokeWidth={2} />
+              <Download size={20} color={colors.background} strokeWidth={2} />
             )}
-            <Text style={styles.exportButtonText}>
+            <Text style={[styles.exportButtonText, { color: colors.background }]}>
               {exporting ? 'Exporting...' : 'Export Data'}
             </Text>
           </TouchableOpacity>
@@ -290,31 +330,30 @@ export function ExportModal({ visible, onClose }: ExportModalProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.lg,
-    paddingBottom: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.muted + '20',
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.sm,
   },
   headerTitle: {
     fontSize: Typography.sizes.header,
     fontFamily: Typography.families.black,
-    color: Colors.text,
   },
-  closeButton: {
+  headerButtons: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  headerButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.shadow,
+    // shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -330,7 +369,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.sizes.header - 2,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
     marginBottom: Spacing.md,
   },
   formatOptions: {
@@ -339,34 +377,20 @@ const styles = StyleSheet.create({
   },
   formatOption: {
     flex: 1,
-    backgroundColor: Colors.white,
     borderRadius: 16,
     padding: Spacing.lg,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: Colors.primary + '20',
-  },
-  formatOptionActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
   },
   formatOptionText: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
     marginTop: Spacing.sm,
-  },
-  formatOptionTextActive: {
-    color: Colors.white,
   },
   formatOptionDescription: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.regular,
-    color: Colors.muted,
     marginTop: 2,
-  },
-  formatOptionDescriptionActive: {
-    color: Colors.white + 'CC',
   },
   dateRangeOptions: {
     gap: Spacing.sm,
@@ -374,31 +398,19 @@ const styles = StyleSheet.create({
   dateRangeOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.white,
     padding: Spacing.md,
     borderRadius: 12,
     gap: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.muted + '20',
-  },
-  dateRangeOptionActive: {
-    borderColor: Colors.primary,
-    backgroundColor: Colors.primary + '10',
   },
   dateRangeOptionText: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.regular,
-    color: Colors.text,
-  },
-  dateRangeOptionTextActive: {
-    fontFamily: Typography.families.bold,
-    color: Colors.primary,
   },
   dataOption: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.white,
     padding: Spacing.md,
     borderRadius: 12,
     marginBottom: Spacing.sm,
@@ -411,24 +423,21 @@ const styles = StyleSheet.create({
   },
   dataOptionTexts: {
     flex: 1,
+    marginRight: Spacing.lg,
   },
   dataOptionLabel: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
   dataOptionDescription: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.regular,
-    color: Colors.muted,
     marginTop: 2,
   },
   previewCard: {
-    backgroundColor: Colors.white,
     borderRadius: 16,
     padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: Colors.muted + '20',
   },
   previewLoading: {
     flexDirection: 'row',
@@ -440,7 +449,6 @@ const styles = StyleSheet.create({
   previewLoadingText: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.regular,
-    color: Colors.muted,
   },
   previewContent: {
     gap: Spacing.sm,
@@ -453,28 +461,23 @@ const styles = StyleSheet.create({
   previewLabel: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.regular,
-    color: Colors.muted,
   },
   previewValue: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
   footer: {
     padding: Spacing.lg,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.muted + '20',
   },
   exportButton: {
-    backgroundColor: Colors.primary,
     borderRadius: 25,
     paddingVertical: Spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -486,6 +489,5 @@ const styles = StyleSheet.create({
   exportButtonText: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.white,
   },
 }); 

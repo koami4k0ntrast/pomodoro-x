@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Tag, Hash, Edit3 } from 'lucide-react-native';
-import { Colors, Spacing, Typography, PredefinedCategories } from '../constants';
+import { Spacing, Typography, PredefinedCategories } from '../constants';
 import { Cycle } from '../types';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface SessionInfoDisplayProps {
   cycle: Cycle | null;
@@ -10,6 +11,8 @@ interface SessionInfoDisplayProps {
 }
 
 export function SessionInfoDisplay({ cycle, onEditPress }: SessionInfoDisplayProps) {
+  const { colors } = useTheme();
+  
   if (!cycle) return null;
 
   const categoryData = cycle.category 
@@ -19,11 +22,11 @@ export function SessionInfoDisplay({ cycle, onEditPress }: SessionInfoDisplayPro
   const hasCycleInfo = cycle.label || cycle.category;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Cycle Info</Text>
-        <TouchableOpacity style={styles.editButton} onPress={onEditPress}>
-          <Edit3 size={16} color={Colors.primary} strokeWidth={2} />
+        <Text style={[styles.title, { color: colors.text }]}>Cycle Info</Text>
+        <TouchableOpacity style={[styles.editButton, { backgroundColor: colors.background }]} onPress={onEditPress}>
+          <Edit3 size={16} color={colors.primary} strokeWidth={2} />
         </TouchableOpacity>
       </View>
 
@@ -32,16 +35,16 @@ export function SessionInfoDisplay({ cycle, onEditPress }: SessionInfoDisplayPro
           {cycle.label && (
             <View style={styles.infoRow}>
               <View style={styles.iconContainer}>
-                <Tag size={16} color={Colors.primary} strokeWidth={2} />
+                <Tag size={16} color={colors.primary} strokeWidth={2} />
               </View>
-              <Text style={styles.infoText}>{cycle.label}</Text>
+              <Text style={[styles.infoText, { color: colors.text }]}>{cycle.label}</Text>
             </View>
           )}
           
           {cycle.category && (
             <View style={styles.infoRow}>
               <View style={styles.iconContainer}>
-                <Hash size={16} color={Colors.accent} strokeWidth={2} />
+                <Hash size={16} color={colors.accent} strokeWidth={2} />
               </View>
               <View style={styles.categoryInfo}>
                 {categoryData && (
@@ -49,7 +52,7 @@ export function SessionInfoDisplay({ cycle, onEditPress }: SessionInfoDisplayPro
                     <Text style={styles.categoryEmoji}>{categoryData.icon}</Text>
                   </View>
                 )}
-                <Text style={styles.infoText}>
+                <Text style={[styles.infoText, { color: colors.text }]}>
                   {categoryData?.name || cycle.category}
                 </Text>
               </View>
@@ -57,8 +60,8 @@ export function SessionInfoDisplay({ cycle, onEditPress }: SessionInfoDisplayPro
           )}
         </View>
       ) : (
-        <TouchableOpacity style={styles.addButton} onPress={onEditPress}>
-          <Text style={styles.addButtonText}>+ Add label & category</Text>
+        <TouchableOpacity style={[styles.addButton, { borderColor: colors.border }]} onPress={onEditPress}>
+          <Text style={[styles.addButtonText, { color: colors.muted }]}>+ Add label & category</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -67,11 +70,9 @@ export function SessionInfoDisplay({ cycle, onEditPress }: SessionInfoDisplayPro
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
     borderRadius: 16,
     padding: Spacing.lg,
     marginVertical: Spacing.md,
-    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -86,13 +87,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
   editButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -113,7 +112,6 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.regular,
-    color: Colors.text,
     flex: 1,
   },
   categoryInfo: {
@@ -137,13 +135,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: Colors.muted + '50',
     borderStyle: 'dashed',
     borderRadius: 8,
   },
   addButtonText: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.bold,
-    color: Colors.muted,
   },
 }); 

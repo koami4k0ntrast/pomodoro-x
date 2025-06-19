@@ -4,6 +4,7 @@ import { Play, Pause, Edit3 } from 'lucide-react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { Colors, Typography, Spacing, PredefinedCategories } from '../constants';
 import { TimerState, Cycle } from '../types';
+import { useTheme } from '../contexts/ThemeContext';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -38,6 +39,7 @@ export function TimerDisplay({
   onResume,
   onEdit
 }: TimerDisplayProps) {
+  const { colors } = useTheme();
   const progressAnim = useRef(new Animated.Value(0)).current;
 
   const formatTime = (seconds: number): string => {
@@ -49,12 +51,12 @@ export function TimerDisplay({
   const getSessionColor = () => {
     switch (sessionType) {
       case 'work':
-        return Colors.primary;
+        return colors.primary;
       case 'shortBreak':
       case 'longBreak':
-        return Colors.secondary;
+        return colors.secondary;
       default:
-        return Colors.muted;
+        return colors.muted;
     }
   };
 
@@ -141,7 +143,7 @@ export function TimerDisplay({
       dots.push(
         <View 
         key={i} 
-        style={[styles.sessionDotIndicator, { backgroundColor: isActive ? Colors.primary : Colors.muted }]}
+        style={[styles.sessionDotIndicator, { backgroundColor: isActive ? colors.primary : colors.muted }]}
         />
       );
     }
@@ -191,33 +193,33 @@ export function TimerDisplay({
     switch (timerState) {
       case 'idle':
         return {
-          icon: <Play size={24} color={Colors.white} strokeWidth={2} fill={Colors.white} />,
+          icon: <Play size={24} color={colors.white} strokeWidth={2} fill={colors.white} />,
           text: 'Start',
-          color: Colors.primary,
+          color: colors.primary,
         };
       case 'running':
         return {
-          icon: <Pause size={24} color={Colors.white} strokeWidth={2} fill={Colors.white} />,
+          icon: <Pause size={24} color={colors.white} strokeWidth={2} fill={colors.white} />,
           text: 'Pause',
-          color: Colors.accent,
+          color: colors.accent,
         };
       case 'paused':
         return {
-          icon: <Play size={24} color={Colors.white} strokeWidth={2} fill={Colors.white} />,
+          icon: <Play size={24} color={colors.white} strokeWidth={2} fill={colors.white} />,
           text: 'Resume',
-          color: Colors.secondary,
+          color: colors.secondary,
         };
       case 'completed':
         return {
-          icon: <Play size={24} color={Colors.white} strokeWidth={2} fill={Colors.white} />,
+          icon: <Play size={24} color={colors.white} strokeWidth={2} fill={colors.white} />,
           text: 'Start Next',
-          color: Colors.primary,
+          color: colors.primary,
         };
       default:
         return {
-          icon: <Play size={24} color={Colors.white} strokeWidth={2} fill={Colors.white} />,
+          icon: <Play size={24} color={colors.white} strokeWidth={2} fill={colors.white} />,
           text: 'Start',
-          color: Colors.primary,
+          color: colors.primary,
         };
     }
   };
@@ -227,15 +229,15 @@ export function TimerDisplay({
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.labelContainer} onPress={onEdit} activeOpacity={0.7}>
-        <View style={styles.editButton}>
-          <Edit3 size={16} color={Colors.primary} strokeWidth={2} />
+        <View style={[styles.editButton, { backgroundColor: colors.background }]}>
+          <Edit3 size={16} color={colors.primary} strokeWidth={2} />
         </View>
         <Text style={[styles.sessionLabel, { color: getSessionColor() }]}>
           {getSessionLabel()}
         </Text>
       </TouchableOpacity>
       
-      <View style={styles.timerContainer}>
+              <View style={[styles.timerContainer, { backgroundColor: colors.background }]}>
         {/* SVG Circular Progress */}
         <Svg
           width={size}
@@ -247,7 +249,7 @@ export function TimerDisplay({
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke={Colors.muted + '40'}
+            stroke={colors.muted + '40'}
             strokeWidth={strokeWidth}
             fill="transparent"
           />
@@ -268,7 +270,7 @@ export function TimerDisplay({
         </Svg>
         
         {/* Timer content overlay */}
-        <View style={styles.timerContent}>
+                  <View style={[styles.timerContent, { backgroundColor: colors.surface }]}>
           {/* Centered Timer Text */}
           <Text style={[styles.timerText, { color: getSessionColor() }]}>
             {formatTime(timeRemaining)}
@@ -279,7 +281,7 @@ export function TimerDisplay({
             <View style={styles.statusContainer}>
               <View style={[
                 styles.statusIndicator, 
-                { backgroundColor: isRunning ? getSessionColor() : Colors.muted }
+                { backgroundColor: isRunning ? getSessionColor() : colors.muted }
               ]} />
               <Text style={styles.statusText}>
                 {isRunning ? 'Running' : 'Paused'}

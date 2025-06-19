@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Target, TrendingUp, Award, Calendar } from 'lucide-react-native';
-import { Colors, Spacing, Typography } from '../constants';
+import { Spacing, Typography } from '../constants';
 import { StorageService } from '../utils/storage';
 import { Goals } from '../types';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface GoalProgressProps {
   completedCycles: number;
@@ -11,6 +12,7 @@ interface GoalProgressProps {
 }
 
 export function GoalProgress({ completedCycles, goals }: GoalProgressProps) {
+  const { colors } = useTheme();
   const [todayFocusTime, setTodayFocusTime] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
 
@@ -35,10 +37,10 @@ export function GoalProgress({ completedCycles, goals }: GoalProgressProps) {
   const streakProgress = Math.min((currentStreak / goals.streakTarget) * 100, 100);
 
   const getProgressColor = (progress: number) => {
-    if (progress >= 100) return '#27ae60'; // Green - Goal achieved
-    if (progress >= 75) return Colors.secondary; // Light green - Close to goal
-    if (progress >= 50) return Colors.accent; // Orange - Making progress
-    return Colors.primary; // Red - Need more work
+    if (progress >= 100) return colors.success; // Green - Goal achieved
+    if (progress >= 75) return colors.secondary; // Light green - Close to goal
+    if (progress >= 50) return colors.accent; // Orange - Making progress
+    return colors.primary; // Red - Need more work
   };
 
   const formatTime = (minutes: number): string => {
@@ -51,18 +53,18 @@ export function GoalProgress({ completedCycles, goals }: GoalProgressProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Today's Progress</Text>
+    <View style={[styles.container, { backgroundColor: colors.surface }]}>
+      <Text style={[styles.title, { color: colors.text }]}>Today's Progress</Text>
       
       <View style={styles.goalsGrid}>
         {/* Daily Goal */}
         <View style={styles.goalItem}>
           <View style={styles.goalHeader}>
             <Target size={16} color={getProgressColor(dailyCycleProgress)} strokeWidth={2} />
-            <Text style={styles.goalLabel}>Cycles</Text>
+            <Text style={[styles.goalLabel, { color: colors.text }]}>Cycles</Text>
           </View>
           <View style={styles.progressContainer}>
-            <View style={styles.progressBackground}>
+            <View style={[styles.progressBackground, { backgroundColor: colors.background }]}>
               <View 
                 style={[
                   styles.progressBar, 
@@ -73,7 +75,7 @@ export function GoalProgress({ completedCycles, goals }: GoalProgressProps) {
                 ]} 
               />
             </View>
-            <Text style={styles.progressText}>
+            <Text style={[styles.progressText, { color: colors.text }]}>
               {completedCycles}/{goals.dailyCycles}
             </Text>
           </View>
@@ -83,10 +85,10 @@ export function GoalProgress({ completedCycles, goals }: GoalProgressProps) {
         <View style={styles.goalItem}>
           <View style={styles.goalHeader}>
             <TrendingUp size={16} color={getProgressColor(dailyFocusProgress)} strokeWidth={2} />
-            <Text style={styles.goalLabel}>Focus Time</Text>
+            <Text style={[styles.goalLabel, { color: colors.text }]}>Focus Time</Text>
           </View>
           <View style={styles.progressContainer}>
-            <View style={styles.progressBackground}>
+            <View style={[styles.progressBackground, { backgroundColor: colors.background }]}>
               <View 
                 style={[
                   styles.progressBar, 
@@ -97,7 +99,7 @@ export function GoalProgress({ completedCycles, goals }: GoalProgressProps) {
                 ]} 
               />
             </View>
-            <Text style={styles.progressText}>
+            <Text style={[styles.progressText, { color: colors.text }]}>
               {formatTime(todayFocusTime)}/{formatTime(goals.dailyFocusTime)}
             </Text>
           </View>
@@ -107,10 +109,10 @@ export function GoalProgress({ completedCycles, goals }: GoalProgressProps) {
         <View style={styles.goalItem}>
           <View style={styles.goalHeader}>
             <Award size={16} color={getProgressColor(streakProgress)} strokeWidth={2} />
-            <Text style={styles.goalLabel}>Streak</Text>
+            <Text style={[styles.goalLabel, { color: colors.text }]}>Streak</Text>
           </View>
           <View style={styles.progressContainer}>
-            <View style={styles.progressBackground}>
+            <View style={[styles.progressBackground, { backgroundColor: colors.background }]}>
               <View 
                 style={[
                   styles.progressBar, 
@@ -121,7 +123,7 @@ export function GoalProgress({ completedCycles, goals }: GoalProgressProps) {
                 ]} 
               />
             </View>
-            <Text style={styles.progressText}>
+            <Text style={[styles.progressText, { color: colors.text }]}>
               {currentStreak}/{goals.streakTarget} days
             </Text>
           </View>
@@ -130,12 +132,12 @@ export function GoalProgress({ completedCycles, goals }: GoalProgressProps) {
 
       {/* Motivational message */}
       {dailyCycleProgress >= 100 ? (
-        <View style={styles.congratsContainer}>
-          <Text style={styles.congratsText}>🎉 Daily goal achieved!</Text>
+        <View style={[styles.congratsContainer, { backgroundColor: colors.success + '20' }]}>
+          <Text style={[styles.congratsText, { color: colors.success }]}>🎉 Daily goal achieved!</Text>
         </View>
       ) : (
-        <View style={styles.motivationContainer}>
-          <Text style={styles.motivationText}>
+        <View style={[styles.motivationContainer, { backgroundColor: colors.primary + '20' }]}>
+          <Text style={[styles.motivationText, { color: colors.primary }]}>
             {goals.dailyCycles - completedCycles} more to reach your daily goal!
           </Text>
         </View>
@@ -146,11 +148,9 @@ export function GoalProgress({ completedCycles, goals }: GoalProgressProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.white,
     borderRadius: 16,
     padding: Spacing.lg,
     marginVertical: Spacing.md,
-    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -159,7 +159,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
     marginBottom: Spacing.md,
     textAlign: 'center',
   },
@@ -178,17 +177,16 @@ const styles = StyleSheet.create({
   goalLabel: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
   progressContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
+    justifyContent: 'space-between',
   },
   progressBackground: {
     flex: 1,
     height: 8,
-    backgroundColor: Colors.background,
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -199,8 +197,7 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
-    minWidth: 60,
+    minWidth: 80,
     textAlign: 'right',
   },
   congratsContainer: {
@@ -220,14 +217,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.primary + '20',
     borderRadius: 8,
     alignItems: 'center',
   },
   motivationText: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.regular,
-    color: Colors.primary,
     textAlign: 'center',
   },
 }); 

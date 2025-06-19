@@ -35,7 +35,7 @@ export interface Settings {
   volume: number; // 0-100
   autoStartBreaks: boolean;
   autoStartWorkSessions: boolean;
-  theme: 'light' | 'dark';
+  theme: 'auto' | 'light' | 'dark'; // Theme preference: auto follows system
   goals: Goals; // user goals
 }
 

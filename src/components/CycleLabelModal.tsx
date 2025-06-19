@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { X, Check, Tag, Hash } from 'lucide-react-native';
 import { Colors, Spacing, Typography, PredefinedCategories, QuickLabels } from '../constants';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface CycleLabelModalProps {
   visible: boolean;
@@ -28,6 +29,7 @@ export function CycleLabelModal({
   initialLabel = '',
   initialCategory = '',
 }: CycleLabelModalProps) {
+  const { colors, isDark } = useTheme();
   const [label, setLabel] = useState(initialLabel);
   const [category, setCategory] = useState(initialCategory);
   const [customCategory, setCustomCategory] = useState('');
@@ -66,57 +68,63 @@ export function CycleLabelModal({
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar 
+          barStyle={isDark ? "light-content" : "dark-content"} 
+          backgroundColor={colors.background} 
+        />
         
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.headerButton} onPress={onClose}>
-            <X size={24} color={Colors.text} strokeWidth={2} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Label Cycle</Text>
-          <TouchableOpacity 
-            style={[styles.headerButton, styles.saveButton]} 
-            onPress={handleSave}
-          >
-            <Check size={24} color={Colors.white} strokeWidth={2} />
-          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>Working on...</Text>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity 
+              style={[styles.headerButton, { backgroundColor: colors.primary }]} 
+              onPress={handleSave}
+            >
+              <Check size={18} color={colors.white} strokeWidth={2} />
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.headerButton, { backgroundColor: colors.surface }]} onPress={onClose}>
+              <X size={20} color={colors.text} strokeWidth={2} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Session Label Input */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Tag size={20} color={Colors.primary} strokeWidth={2} />
-              <Text style={styles.sectionTitle}>Cycle Label</Text>
+              <Tag size={20} color={colors.primary} strokeWidth={2} />
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Label</Text>
             </View>
             
             <TextInput
-              style={styles.textInput}
+              style={[styles.textInput, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.border }]}
               value={label}
               onChangeText={setLabel}
               placeholder="What are you working on?"
-              placeholderTextColor={Colors.muted}
+              placeholderTextColor={colors.muted}
               multiline
               textAlignVertical="top"
             />
 
             {/* Quick Labels */}
-            <Text style={styles.subTitle}>Quick Labels</Text>
+            <Text style={[styles.subTitle, { color: colors.muted }]}>Quick Labels</Text>
             <View style={styles.quickLabels}>
               {QuickLabels.map((quickLabel) => (
                 <TouchableOpacity
                   key={quickLabel}
                   style={[
                     styles.quickLabelChip,
-                    label === quickLabel && styles.quickLabelChipSelected,
+                    { backgroundColor: colors.surface, borderColor: colors.border },
+                    label === quickLabel && { backgroundColor: colors.primary, borderColor: colors.primary },
                   ]}
                   onPress={() => selectQuickLabel(quickLabel)}
                 >
                   <Text
                     style={[
                       styles.quickLabelText,
-                      label === quickLabel && styles.quickLabelTextSelected,
+                      { color: label === quickLabel ? colors.white : colors.text }
                     ]}
                   >
                     {quickLabel}
@@ -129,8 +137,8 @@ export function CycleLabelModal({
           {/* Category Selection */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Hash size={20} color={Colors.accent} strokeWidth={2} />
-              <Text style={styles.sectionTitle}>Category</Text>
+              <Hash size={20} color={colors.accent} strokeWidth={2} />
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Category</Text>
             </View>
 
             <View style={styles.categories}>
@@ -139,7 +147,8 @@ export function CycleLabelModal({
                   key={cat.id}
                   style={[
                     styles.categoryItem,
-                    category === cat.id && styles.categoryItemSelected,
+                    { backgroundColor: colors.surface, borderColor: colors.border },
+                    category === cat.id && { borderColor: colors.accent, backgroundColor: colors.accent + '10' },
                   ]}
                   onPress={() => selectCategory(cat.id)}
                 >
@@ -149,7 +158,8 @@ export function CycleLabelModal({
                   <Text
                     style={[
                       styles.categoryText,
-                      category === cat.id && styles.categoryTextSelected,
+                      { color: category === cat.id ? colors.accent : colors.text },
+                      category === cat.id && { fontFamily: Typography.families.bold }
                     ]}
                   >
                     {cat.name}
@@ -163,43 +173,43 @@ export function CycleLabelModal({
               style={styles.customCategoryToggle}
               onPress={() => setShowCustomCategory(!showCustomCategory)}
             >
-              <Text style={styles.customCategoryToggleText}>
+              <Text style={[styles.customCategoryToggleText, { color: colors.accent }]}>
                 {showCustomCategory ? 'Use Predefined Categories' : 'Add Custom Category'}
               </Text>
             </TouchableOpacity>
 
             {showCustomCategory && (
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.border }]}
                 value={customCategory}
                 onChangeText={setCustomCategory}
                 placeholder="Enter custom category name"
-                placeholderTextColor={Colors.muted}
+                placeholderTextColor={colors.muted}
               />
             )}
           </View>
 
           {/* Current Selection Summary */}
           {(label || category || customCategory) && (
-            <View style={styles.summary}>
-              <Text style={styles.summaryTitle}>Cycle Summary</Text>
+            <View style={[styles.summary, { backgroundColor: colors.surface, borderColor: colors.primary + '30' }]}>
+              <Text style={[styles.summaryTitle, { color: colors.primary }]}>Cycle Summary</Text>
               <View style={styles.summaryContent}>
                 {label && (
                   <View style={styles.summaryRow}>
-                    <Text style={styles.summaryLabel}>Label:</Text>
-                    <Text style={styles.summaryValue}>{label}</Text>
+                    <Text style={[styles.summaryLabel, { color: colors.muted }]}>Label:</Text>
+                    <Text style={[styles.summaryValue, { color: colors.text }]}>{label}</Text>
                   </View>
                 )}
                 {(category || customCategory) && (
                   <View style={styles.summaryRow}>
-                    <Text style={styles.summaryLabel}>Category:</Text>
+                    <Text style={[styles.summaryLabel, { color: colors.muted }]}>Category:</Text>
                     <View style={styles.summaryCategory}>
                       {selectedCategoryData && !showCustomCategory && (
                         <View style={[styles.summaryCategoryIcon, { backgroundColor: selectedCategoryData.color }]}>
                           <Text style={styles.summaryCategoryEmoji}>{selectedCategoryData.icon}</Text>
                         </View>
                       )}
-                      <Text style={styles.summaryValue}>
+                      <Text style={[styles.summaryValue, { color: colors.text }]}>
                         {showCustomCategory ? customCategory : selectedCategoryData?.name}
                       </Text>
                     </View>
@@ -217,37 +227,33 @@ export function CycleLabelModal({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.muted + '30',
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.sm,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
   },
   headerButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-  saveButton: {
-    backgroundColor: Colors.primary,
-  },
   headerTitle: {
     fontSize: Typography.sizes.header,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
   content: {
     flex: 1,

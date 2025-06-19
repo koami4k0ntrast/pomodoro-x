@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Play, Pause, Square, SkipForward } from 'lucide-react-native';
-import { Colors, Typography, Spacing } from '../constants';
+import { Typography, Spacing } from '../constants';
 import { TimerState } from '../types';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface ControlButtonsProps {
   timerState: TimerState;
@@ -21,17 +22,19 @@ export function ControlButtons({
   onStop,
   onSkip,
 }: ControlButtonsProps) {
+  const { colors } = useTheme();
+  
   const renderPrimaryButton = () => {
     switch (timerState) {
       case 'idle':
         return (
           <TouchableOpacity 
-            style={[styles.primaryButton, styles.startButton]} 
+            style={[styles.primaryButton, { backgroundColor: colors.primary, shadowColor: colors.shadow }]} 
             onPress={onStart}
             activeOpacity={0.8}
           >
-            <Play size={20} color={Colors.white} strokeWidth={2} fill={Colors.white} />
-            <Text style={[styles.buttonText, styles.primaryButtonText]}>
+            <Play size={20} color={colors.white} strokeWidth={2} fill={colors.white} />
+            <Text style={[styles.buttonText, { color: colors.white }]}>
               Start
             </Text>
           </TouchableOpacity>
@@ -40,12 +43,12 @@ export function ControlButtons({
       case 'running':
         return (
           <TouchableOpacity 
-            style={[styles.primaryButton, styles.pauseButton]} 
+            style={[styles.primaryButton, { backgroundColor: colors.accent, shadowColor: colors.shadow }]} 
             onPress={onPause}
             activeOpacity={0.8}
           >
-            <Pause size={20} color={Colors.white} strokeWidth={2} fill={Colors.white} />
-            <Text style={[styles.buttonText, styles.primaryButtonText]}>
+            <Pause size={20} color={colors.white} strokeWidth={2} fill={colors.white} />
+            <Text style={[styles.buttonText, { color: colors.white }]}>
               Pause
             </Text>
           </TouchableOpacity>
@@ -54,12 +57,12 @@ export function ControlButtons({
       case 'paused':
         return (
           <TouchableOpacity 
-            style={[styles.primaryButton, styles.resumeButton]} 
+            style={[styles.primaryButton, { backgroundColor: colors.secondary, shadowColor: colors.shadow }]} 
             onPress={onResume}
             activeOpacity={0.8}
           >
-            <Play size={20} color={Colors.white} strokeWidth={2} fill={Colors.white} />
-            <Text style={[styles.buttonText, styles.primaryButtonText]}>
+            <Play size={20} color={colors.white} strokeWidth={2} fill={colors.white} />
+            <Text style={[styles.buttonText, { color: colors.white }]}>
               Resume
             </Text>
           </TouchableOpacity>
@@ -68,12 +71,12 @@ export function ControlButtons({
       case 'completed':
         return (
           <TouchableOpacity 
-            style={[styles.primaryButton, styles.completedButton]} 
+            style={[styles.primaryButton, { backgroundColor: colors.primary, shadowColor: colors.shadow }]} 
             onPress={onStart}
             activeOpacity={0.8}
           >
-            <Play size={20} color={Colors.white} strokeWidth={2} fill={Colors.white} />
-            <Text style={[styles.buttonText, styles.primaryButtonText]}>
+            <Play size={20} color={colors.white} strokeWidth={2} fill={colors.white} />
+            <Text style={[styles.buttonText, { color: colors.white }]}>
               Start Next
             </Text>
           </TouchableOpacity>
@@ -93,23 +96,37 @@ export function ControlButtons({
       {showSecondaryButtons && (
         <View style={styles.secondaryButtons}>
           <TouchableOpacity 
-            style={[styles.secondaryButton, styles.stopButton]} 
+            style={[
+              styles.secondaryButton, 
+              { 
+                borderColor: colors.error, 
+                backgroundColor: colors.error + '15',
+                shadowColor: colors.shadow
+              }
+            ]} 
             onPress={onStop}
             activeOpacity={0.8}
           >
-            <Square size={16} color="#e74c3c" strokeWidth={2} fill="#e74c3c" />
-            <Text style={[styles.buttonText, styles.secondaryButtonText, styles.stopButtonText]}>
+            <Square size={16} color={colors.error} strokeWidth={2} fill={colors.error} />
+            <Text style={[styles.buttonText, { color: colors.error }]}>
               Stop
             </Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
-            style={[styles.secondaryButton, styles.skipButton]} 
+            style={[
+              styles.secondaryButton, 
+              { 
+                borderColor: colors.accent, 
+                backgroundColor: colors.accent + '15',
+                shadowColor: colors.shadow
+              }
+            ]} 
             onPress={onSkip}
             activeOpacity={0.8}
           >
-            <SkipForward size={16} color={Colors.accent} strokeWidth={2} />
-            <Text style={[styles.buttonText, styles.secondaryButtonText, styles.skipButtonText]}>
+            <SkipForward size={16} color={colors.accent} strokeWidth={2} />
+            <Text style={[styles.buttonText, { color: colors.accent }]}>
               Skip
             </Text>
           </TouchableOpacity>
@@ -133,7 +150,6 @@ const styles = StyleSheet.create({
     minWidth: 200,
     justifyContent: 'center',
     gap: Spacing.sm,
-    shadowColor: Colors.shadow,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -141,18 +157,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
-  },
-  startButton: {
-    backgroundColor: Colors.primary,
-  },
-  pauseButton: {
-    backgroundColor: Colors.accent,
-  },
-  resumeButton: {
-    backgroundColor: Colors.secondary,
-  },
-  completedButton: {
-    backgroundColor: Colors.primary,
   },
   secondaryButtons: {
     flexDirection: 'row',
@@ -165,35 +169,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: Colors.muted,
-    backgroundColor: Colors.white,
+    borderWidth: 2,
     minWidth: 80,
     justifyContent: 'center',
     gap: Spacing.xs,
-  },
-  stopButton: {
-    borderColor: '#e74c3c',
-  },
-  skipButton: {
-    borderColor: Colors.accent,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   buttonText: {
     fontSize: Typography.sizes.body,
     fontWeight: Typography.weights.medium,
     fontFamily: Typography.families.bold,
     textAlign: 'center',
-  },
-  primaryButtonText: {
-    color: Colors.white,
-  },
-  secondaryButtonText: {
-    color: Colors.text,
-  },
-  stopButtonText: {
-    color: '#e74c3c',
-  },
-  skipButtonText: {
-    color: Colors.accent,
   },
 }); 

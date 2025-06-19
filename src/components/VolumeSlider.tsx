@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { VolumeX, Volume1, Volume2, Volume } from 'lucide-react-native';
-import { Colors, Typography, Spacing } from '../constants';
+import { Typography, Spacing } from '../constants';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface VolumeSliderProps {
   value: number;
@@ -9,6 +10,8 @@ interface VolumeSliderProps {
 }
 
 export function VolumeSlider({ value, onChange }: VolumeSliderProps) {
+  const { colors } = useTheme();
+  
   const handleDecrease = () => {
     const newValue = Math.max(0, value - 10);
     onChange(newValue);
@@ -20,36 +23,48 @@ export function VolumeSlider({ value, onChange }: VolumeSliderProps) {
   };
 
   const getVolumeIcon = () => {
-    if (value === 0) return <VolumeX size={16} color={Colors.muted} strokeWidth={2} />;
-    if (value < 30) return <Volume size={16} color={Colors.text} strokeWidth={2} />;
-    if (value < 70) return <Volume1 size={16} color={Colors.text} strokeWidth={2} />;
-    return <Volume2 size={16} color={Colors.text} strokeWidth={2} />;
+    if (value === 0) return <VolumeX size={16} color={colors.muted} strokeWidth={2} />;
+    if (value < 30) return <Volume size={16} color={colors.text} strokeWidth={2} />;
+    if (value < 70) return <Volume1 size={16} color={colors.text} strokeWidth={2} />;
+    return <Volume2 size={16} color={colors.text} strokeWidth={2} />;
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <View style={styles.volumeIconContainer}>
         {getVolumeIcon()}
       </View>
       
       <TouchableOpacity
-        style={[styles.button, value <= 0 && styles.buttonDisabled]}
+        style={[
+          styles.button, 
+          { backgroundColor: value <= 0 ? colors.muted + '30' : colors.primary }
+        ]}
         onPress={handleDecrease}
         disabled={value <= 0}
       >
-        <Text style={[styles.buttonText, value <= 0 && styles.buttonTextDisabled]}>−</Text>
+        <Text style={[
+          styles.buttonText, 
+          { color: value <= 0 ? colors.muted : colors.white }
+        ]}>−</Text>
       </TouchableOpacity>
       
       <View style={styles.valueContainer}>
-        <Text style={styles.valueText}>{Math.round(value)}%</Text>
+        <Text style={[styles.valueText, { color: colors.text }]}>{Math.round(value)}%</Text>
       </View>
       
       <TouchableOpacity
-        style={[styles.button, value >= 100 && styles.buttonDisabled]}
+        style={[
+          styles.button, 
+          { backgroundColor: value >= 100 ? colors.muted + '30' : colors.primary }
+        ]}
         onPress={handleIncrease}
         disabled={value >= 100}
       >
-        <Text style={[styles.buttonText, value >= 100 && styles.buttonTextDisabled]}>+</Text>
+        <Text style={[
+          styles.buttonText, 
+          { color: value >= 100 ? colors.muted : colors.white }
+        ]}>+</Text>
       </TouchableOpacity>
     </View>
   );
@@ -61,10 +76,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     marginLeft: Spacing.md,
-    backgroundColor: Colors.white,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: Colors.muted + '30',
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
   },
@@ -77,21 +90,19 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonDisabled: {
-    backgroundColor: Colors.muted + '30',
+    backgroundColor: 'transparent',
   },
   buttonText: {
     fontSize: 16,
     fontFamily: Typography.families.bold,
-    color: Colors.white,
     lineHeight: 18,
   },
   buttonTextDisabled: {
-    color: Colors.muted,
+    color: 'transparent',
   },
   valueContainer: {
     flex: 1,
@@ -101,6 +112,5 @@ const styles = StyleSheet.create({
   valueText: {
     fontSize: Typography.sizes.caption + 1,
     fontFamily: Typography.families.bold,
-    color: Colors.text,
   },
 }); 

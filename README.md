@@ -40,10 +40,10 @@ The Pomodoro Technique is a time management method that uses a timer to break wo
 - **Progress Tracking**: Real-time progress bars for daily goals
 - **Data Export**: Export cycles, sessions, and statistics for external analysis
 
-### Phase 4: Enhanced Features 🎯
-- **Task Integration**: Link specific tasks to Pomodoro cycles
+### Phase 4: Enhanced Features 🚧
+- **Theme System**: ✅ Auto/Light/Dark theme with system detection
+- **Task Integration**: Link specific tasks to cycles
 - **Ambient Sounds**: Optional background noise and white noise
-- **Theme Options**: Light and dark mode support
 - **Accessibility**: Full keyboard navigation and screen reader support
 - **Focus Mode**: Distraction-free minimal interface
 

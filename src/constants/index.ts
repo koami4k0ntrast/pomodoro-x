@@ -63,7 +63,7 @@ export const DefaultSettings: Settings = {
   volume: 80,
   autoStartBreaks: false,
   autoStartWorkSessions: false,
-  theme: 'light',
+  theme: 'auto', // Default to auto (follow system theme)
   goals: DefaultGoals,
 };
 

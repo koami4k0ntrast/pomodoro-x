@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Plus, Minus } from 'lucide-react-native';
-import { Colors, Typography, Spacing } from '../constants';
+import { Typography, Spacing } from '../constants';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface DurationPickerProps {
   value: number;
@@ -12,6 +13,8 @@ interface DurationPickerProps {
 }
 
 export function DurationPicker({ value, onChange, min, max, suffix }: DurationPickerProps) {
+  const { colors } = useTheme();
+  
   const handleDecrement = () => {
     if (value > min) {
       onChange(value - 1);
@@ -25,32 +28,38 @@ export function DurationPicker({ value, onChange, min, max, suffix }: DurationPi
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <TouchableOpacity
-        style={[styles.button, value <= min && styles.buttonDisabled]}
+        style={[
+          styles.button, 
+          { backgroundColor: value <= min ? colors.muted + '30' : colors.primary }
+        ]}
         onPress={handleDecrement}
         disabled={value <= min}
       >
         <Minus 
           size={16} 
-          color={value <= min ? Colors.muted : Colors.white} 
+          color={value <= min ? colors.muted : colors.white} 
           strokeWidth={2} 
         />
       </TouchableOpacity>
       
       <View style={styles.valueContainer}>
-        <Text style={styles.value}>{value}</Text>
-        <Text style={styles.suffix}>{suffix}</Text>
+        <Text style={[styles.value, { color: colors.text }]}>{value}</Text>
+        <Text style={[styles.suffix, { color: colors.muted }]}>{suffix}</Text>
       </View>
       
       <TouchableOpacity
-        style={[styles.button, value >= max && styles.buttonDisabled]}
+        style={[
+          styles.button, 
+          { backgroundColor: value >= max ? colors.muted + '30' : colors.primary }
+        ]}
         onPress={handleIncrement}
         disabled={value >= max}
       >
         <Plus 
           size={16} 
-          color={value >= max ? Colors.muted : Colors.white} 
+          color={value >= max ? colors.muted : colors.white} 
           strokeWidth={2} 
         />
       </TouchableOpacity>
@@ -62,10 +71,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.white,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: Colors.muted + '30',
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
   },
@@ -73,12 +80,11 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonDisabled: {
-    backgroundColor: Colors.muted + '30',
+    backgroundColor: 'transparent',
   },
   valueContainer: {
     alignItems: 'center',
@@ -88,12 +94,10 @@ const styles = StyleSheet.create({
   value: {
     fontSize: Typography.sizes.body + 2,
     fontFamily: Typography.families.black,
-    color: Colors.text,
   },
   suffix: {
     fontSize: Typography.sizes.caption,
     fontFamily: Typography.families.regular,
-    color: Colors.muted,
     marginTop: -2,
   },
 }); 
