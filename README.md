@@ -31,7 +31,7 @@ The Pomodoro Technique is a time management method that uses a timer to break wo
 - **Visual Preferences**: Customizable notification styles
 
 ### Phase 3: Tracking & Analytics ✅
-- **Cycle Labeling**: Label complete Pomodoro cycles with task names and categories
+- **Cycle Labeling**: Label complete pomodoro cycles with task names and categories
 - **Smart Label Persistence**: Labels automatically carry forward to new cycles
 - **Comprehensive Statistics**: Daily, weekly, and monthly productivity insights
 - **Goal Setting**: Set and track daily/weekly Pomodoro and focus time targets
@@ -322,7 +322,8 @@ npm run web            # Run on web browser
 
 #### 📈 **Enhanced Statistics**
 - **Category Breakdown**: Top 5 categories with usage percentages
-- **Time Analysis**: Focus vs. break time tracking
+- **Focus vs Break Analysis**: Visual comparison with percentage breakdown and balance insights
+- **Time Analysis**: Comprehensive focus and break time tracking
 - **Streak Tracking**: Consecutive productive days
 - **Historical Data**: Daily, weekly, and monthly views
 - **Performance Metrics**: Average sessions per day, completion rates

@@ -332,6 +332,98 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
     );
   };
 
+  const renderFocusVsBreakCard = () => {
+    const totalTime = overview.totalFocusTime + overview.totalBreakTime;
+    
+    if (totalTime === 0) {
+      return null;
+    }
+
+    const focusPercentage = Math.round((overview.totalFocusTime / totalTime) * 100);
+    const breakPercentage = Math.round((overview.totalBreakTime / totalTime) * 100);
+    
+    // Calculate balance insight
+    const getBalanceInsight = () => {
+      if (focusPercentage >= 75) {
+        return { text: "High focus ratio - consider more breaks", color: Colors.accent };
+      } else if (focusPercentage >= 65) {
+        return { text: "Great focus balance!", color: Colors.secondary };
+      } else if (focusPercentage >= 50) {
+        return { text: "Balanced focus and break time", color: Colors.secondary };
+      } else {
+        return { text: "More focus time recommended", color: Colors.primary };
+      }
+    };
+
+    const balanceInsight = getBalanceInsight();
+
+    return (
+      <View style={styles.focusVsBreakCard}>
+        <View style={styles.focusVsBreakHeader}>
+          <BarChart3 size={20} color={Colors.primary} strokeWidth={2} />
+          <Text style={styles.focusVsBreakTitle}>Focus vs Break Time</Text>
+        </View>
+        
+        <View style={styles.focusVsBreakContent}>
+          <View style={styles.timeComparisonRow}>
+            <View style={styles.timeComparisonItem}>
+              <Text style={styles.timeComparisonLabel}>Focus</Text>
+              <Text style={[styles.timeComparisonValue, { color: Colors.primary }]}>
+                {focusPercentage}%
+              </Text>
+              <Text style={styles.timeComparisonTime}>
+                {formatTime(overview.totalFocusTime)}
+              </Text>
+            </View>
+            
+            <View style={styles.timeComparisonDivider} />
+            
+            <View style={styles.timeComparisonItem}>
+              <Text style={styles.timeComparisonLabel}>Break</Text>
+              <Text style={[styles.timeComparisonValue, { color: Colors.secondary }]}>
+                {breakPercentage}%
+              </Text>
+              <Text style={styles.timeComparisonTime}>
+                {formatTime(overview.totalBreakTime)}
+              </Text>
+            </View>
+          </View>
+          
+          {/* Visual ratio bar */}
+          <View style={styles.ratioBarContainer}>
+            <View style={styles.ratioBar}>
+              <View 
+                style={[
+                  styles.ratioBarFocus, 
+                  { 
+                    width: `${focusPercentage}%`,
+                    backgroundColor: Colors.primary
+                  }
+                ]} 
+              />
+              <View 
+                style={[
+                  styles.ratioBarBreak, 
+                  { 
+                    width: `${breakPercentage}%`,
+                    backgroundColor: Colors.secondary
+                  }
+                ]} 
+              />
+            </View>
+          </View>
+          
+          {/* Balance insight */}
+          <View style={styles.balanceInsight}>
+            <Text style={[styles.balanceInsightText, { color: balanceInsight.color }]}>
+              {balanceInsight.text}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   const renderCategoryBreakdown = () => {
     const categoryEntries = Object.entries(overview.categories)
       .sort(([,a], [,b]) => b - a)
@@ -445,43 +537,38 @@ export function StatisticsScreen({ onClose }: StatisticsScreenProps) {
           )}
         </View>
 
+        {/* Focus vs Break Time Comparison */}
+        {renderFocusVsBreakCard()}
+
         {/* Chart */}
         {renderChart()}
 
         {/* Additional Stats */}
         <View style={styles.additionalStats}>
-          <Text style={styles.sectionTitle}>Breakdown</Text>
+          <Text style={styles.sectionTitle}>Additional Insights</Text>
           
+          <View style={styles.breakdownItem}>
+            <View style={styles.breakdownIcon}>
+              <BarChart3 size={16} color={Colors.accent} strokeWidth={2} />
+            </View>
+            <View style={styles.breakdownContent}>
+              <Text style={styles.breakdownLabel}>Average per Day</Text>
+              <Text style={styles.breakdownValue}>
+                {stats.length > 0 ? Math.min(Math.round(overview.totalCycles / stats.length), 99) : 0} cycles
+              </Text>
+            </View>
+          </View>
+
           <View style={styles.breakdownItem}>
             <View style={styles.breakdownIcon}>
               <Clock size={16} color={Colors.primary} strokeWidth={2} />
             </View>
             <View style={styles.breakdownContent}>
-              <Text style={styles.breakdownLabel}>Total Focus Time</Text>
-              <Text style={styles.breakdownValue}>{formatTime(overview.totalFocusTime)}</Text>
+              <Text style={styles.breakdownLabel}>Total Session Time</Text>
+              <Text style={styles.breakdownValue}>
+                {formatTime(overview.totalFocusTime + overview.totalBreakTime)}
+              </Text>
             </View>
-          </View>
-
-          <View style={styles.breakdownItem}>
-            <View style={styles.breakdownIcon}>
-              <Clock size={16} color={Colors.secondary} strokeWidth={2} />
-            </View>
-            <View style={styles.breakdownContent}>
-              <Text style={styles.breakdownLabel}>Total Break Time</Text>
-              <Text style={styles.breakdownValue}>{formatTime(overview.totalBreakTime)}</Text>
-            </View>
-          </View>
-
-          <View style={styles.breakdownItem}>
-            <View style={styles.breakdownIcon}>
-              <BarChart3 size={16} color={Colors.accent} strokeWidth={2} />
-            </View>
-                         <View style={styles.breakdownContent}>
-               <Text style={styles.breakdownLabel}>Average per Day</Text>
-               <Text style={styles.breakdownValue}>
-                 {stats.length > 0 ? Math.min(Math.round(overview.totalCycles / stats.length), 99) : 0} cycles
-               </Text>
-             </View>
           </View>
         </View>
 
@@ -711,5 +798,91 @@ const styles = StyleSheet.create({
     fontSize: Typography.sizes.body,
     fontFamily: Typography.families.bold,
     color: Colors.text,
+  },
+  // Focus vs Break Card Styles
+  focusVsBreakCard: {
+    backgroundColor: Colors.white,
+    borderRadius: 12,
+    padding: Spacing.lg,
+    marginBottom: Spacing.xl,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  focusVsBreakHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+  },
+  focusVsBreakTitle: {
+    fontSize: Typography.sizes.header,
+    fontFamily: Typography.families.bold,
+    color: Colors.text,
+    marginLeft: Spacing.sm,
+  },
+  focusVsBreakContent: {
+    gap: Spacing.lg,
+  },
+  timeComparisonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  timeComparisonItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  timeComparisonLabel: {
+    fontSize: Typography.sizes.body,
+    fontFamily: Typography.families.regular,
+    color: Colors.muted,
+    marginBottom: Spacing.xs,
+  },
+  timeComparisonValue: {
+    fontSize: 28,
+    fontFamily: Typography.families.black,
+    marginBottom: 4,
+  },
+  timeComparisonTime: {
+    fontSize: Typography.sizes.caption,
+    fontFamily: Typography.families.regular,
+    color: Colors.muted,
+  },
+  timeComparisonDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: Colors.background,
+    marginHorizontal: Spacing.md,
+  },
+  ratioBarContainer: {
+    marginVertical: Spacing.sm,
+  },
+  ratioBar: {
+    flexDirection: 'row',
+    height: 8,
+    borderRadius: 4,
+    overflow: 'hidden',
+    backgroundColor: Colors.background,
+  },
+  ratioBarFocus: {
+    height: '100%',
+    borderTopLeftRadius: 4,
+    borderBottomLeftRadius: 4,
+  },
+  ratioBarBreak: {
+    height: '100%',
+    borderTopRightRadius: 4,
+    borderBottomRightRadius: 4,
+  },
+  balanceInsight: {
+    alignItems: 'center',
+    paddingTop: Spacing.sm,
+  },
+  balanceInsightText: {
+    fontSize: Typography.sizes.body,
+    fontFamily: Typography.families.bold,
+    textAlign: 'center',
   },
 }); 
